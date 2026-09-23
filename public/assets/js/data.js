@@ -3796,6 +3796,27 @@ const DOAS = [
     "ar": "رَبِّ اغْفِرْ لِيْ وَلِوَالِدَيَّ وَارْحَمْهُمَا كَمَا رَبَّيَانِيْ صَغِيْرًا",
     "lat": "Rabbigh-fir li wa liwalidayya warhamhuma kama rabbayani shaghira",
     "id": "Ya Tuhanku, ampunilah aku dan kedua orang tuaku, dan sayangilah mereka sebagaimana mereka menyayangiku waktu kecil."
+  },
+  {
+    "name": "Doa Bercermin",
+    "icon": "🪞",
+    "ar": "اَللّٰهُمَّ أَحْسَنْتَ خَلْقِيْ فَأَحْسِنْ خُلُقِيْ",
+    "lat": "Allahumma ahsanta khalqī fa ahsin khuluqī",
+    "id": "Ya Allah, Engkau telah menyempurnakan khalqku, maka sempurnakanlah akhlakku."
+  },
+  {
+    "name": "Doa Berpakaian",
+    "icon": "👕",
+    "ar": "اَلْحَمْدُ لِلّٰهِ الَّذِيْ كَسَانِيْ هَذَا الثَّوْبَ وَرَزَقَنِيْهِ مِنْ غَيْرِ حَوْلٍ مِنِّيْ وَلَا قُوَّةٍ",
+    "lat": "Alhamdulillahil-ladzi kasani hādzā ats-tsauba wa razaqanīhi min ghairi hawlin minnī wa lā quwwatin",
+    "id": "Segala puji bagi Allah yang telah menggenapiiku dengan pakaian ini dan memberikannya kepadaku tanpa usaha dan tenaga dariku."
+  },
+  {
+    "name": "Doa Keluar Rumah",
+    "icon": "🏠",
+    "ar": "بِسْمِ اللّٰهِ تَوَكَّلْتُ عَلَى اللّٰهِ وَلَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللّٰهِ",
+    "lat": "Bismillāhi tawakkaltu 'alallāhi wa lā hawla wa lā quwwata illā billāh",
+    "id": "Dengan nama Allah, aku bertawakal kepada Allah, dan tidak ada daya dan kekuatan melainkan dengan pertolongan Allah."
   }
 ];
 
