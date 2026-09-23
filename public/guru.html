@@ -3,6 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#065f46" />
+<script>
+  (function () {
+    try {
+      var t = localStorage.getItem("tazkiah-theme");
+      if (t ? t === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        document.documentElement.setAttribute("data-theme", "dark");
+      }
+    } catch (e) {}
+  })();
+</script>
   <title>Laporan Guru — Cordova E-Learn</title>
   <link rel="icon" type="image/png" href="assets/img/favicon.png" />
   <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png" />
@@ -92,10 +103,58 @@
     .guru-note { font-size: 11.5px; color: var(--ink-soft); margin: 8px 0 0; }
     .footer-link { margin-top: 22px; text-align: center; font-size: 12.5px; color: var(--ink-soft); }
     .footer-link a { color: var(--emerald-700); font-weight: 800; }
+
+    /* ---- tombol mode gelap (halaman guru) ---- */
+    .guru-theme-toggle { position: fixed; top: 14px; right: 14px; z-index: 120; }
+
+    /* ================= MODE GELAP HALAMAN GURU ================= */
+    [data-theme="dark"] body {
+      background:
+        radial-gradient(1100px 600px at 85% -10%, #123326 0%, transparent 55%),
+        radial-gradient(900px 520px at -10% 15%, #221a08 0%, transparent 50%),
+        var(--cream);
+    }
+    [data-theme="dark"] .guru-head h1,
+    [data-theme="dark"] .guru-login .card h3 { color: #cdeede; }
+    [data-theme="dark"] .guru-login .card,
+    [data-theme="dark"] .gstat,
+    [data-theme="dark"] table.gtable,
+    [data-theme="dark"] .guru-toolbar input,
+    [data-theme="dark"] .guru-toolbar select,
+    [data-theme="dark"] .guru-login input { background: #0f1f1a; }
+    [data-theme="dark"] .guru-login .card,
+    [data-theme="dark"] .gstat,
+    [data-theme="dark"] .guru-toolbar input,
+    [data-theme="dark"] .guru-toolbar select,
+    [data-theme="dark"] .guru-login input { border-color: rgba(140, 200, 175, .25); box-shadow: var(--shadow-sm) !important; }
+    [data-theme="dark"] .guru-toolbar input,
+    [data-theme="dark"] .guru-toolbar select,
+    [data-theme="dark"] .guru-login input { color: var(--ink); }
+    [data-theme="dark"] .guru-toolbar input::placeholder,
+    [data-theme="dark"] .guru-login input::placeholder { color: var(--ink-soft); }
+    [data-theme="dark"] .gstat .gs-val,
+    [data-theme="dark"] .gstat .gs-label { color: #7ee2b8; }
+    [data-theme="dark"] .gtable th { background: #0b3d2e; }
+    [data-theme="dark"] .gtable td { border-color: rgba(140, 200, 175, .1); color: var(--ink); }
+    [data-theme="dark"] .gtable tr:nth-child(even) td { background: #12261f; }
+    [data-theme="dark"] .gtable td.nm { color: #cdeede; }
+    [data-theme="dark"] .row-detail { background: #0d2017 !important; }
+    [data-theme="dark"] .row-detail td { color: var(--ink-soft); }
+    [data-theme="dark"] .row-detail strong { color: #7ee2b8 !important; }
+    [data-theme="dark"] .row-btn { background: #13322a; border-color: #1d4a3a; color: #a7f3d0; }
+    [data-theme="dark"] .row-danger { background: #33121f; border-color: #7f1d3a; color: #fda4af; }
+    [data-theme="dark"] .row-danger:hover { background: #4c1526; }
+    [data-theme="dark"] .gtable .b-green { background: #13322a; color: #7ee2b8; }
+    [data-theme="dark"] .gtable .b-gold { background: #2a220d; color: #f0cf6b; }
+    [data-theme="dark"] .gtable .b-red { background: #3b1522; color: #fda4af; }
+    [data-theme="dark"] .hafal-tags span { background: #13322a; border-color: #1d4a3a; color: #a7f3d0; }
+    [data-theme="dark"] .guru-empty { color: var(--ink-soft); }
+    [data-theme="dark"] .guru-login .auth-logo { box-shadow: 0 8px 20px rgba(0, 0, 0, .5); }
   </style>
 </head>
 <body>
   <div class="guru-wrap">
+    <button class="theme-toggle guru-theme-toggle" id="btn-guru-theme" aria-label="Mode gelap" title="Ganti ke mode gelap">🌙</button>
 
     <!-- TAMPILAN LOGIN -->
     <div class="guru-login" id="view-login">

@@ -47,6 +47,36 @@ function timeAgo(ts) {
   return d + " hari lalu";
 }
 
+/* ---------- mode gelap / terang (sinkron dengan aplikasi murid) ---------- */
+const THEME_KEY = "tazkiah-theme";
+function applyGuruTheme(dark, persist) {
+  const root = document.documentElement;
+  if (dark) root.setAttribute("data-theme", "dark");
+  else root.removeAttribute("data-theme");
+  const b = $("btn-guru-theme");
+  if (b) {
+    b.textContent = dark ? "☀️" : "🌙";
+    b.setAttribute("aria-label", dark ? "Mode terang" : "Mode gelap");
+    b.title = dark ? "Ganti ke mode terang" : "Ganti ke mode gelap";
+  }
+  if (persist) {
+    try { localStorage.setItem(THEME_KEY, dark ? "dark" : "light"); } catch (e) {}
+  }
+}
+function initGuruTheme() {
+  let saved = null;
+  try { saved = localStorage.getItem(THEME_KEY); } catch (e) {}
+  applyGuruTheme(
+    saved ? saved === "dark" : !!(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches),
+    false
+  );
+  const b = $("btn-guru-theme");
+  if (b) b.addEventListener("click", () => applyGuruTheme(rootIsDark(), true));
+}
+function rootIsDark() {
+  return document.documentElement.getAttribute("data-theme") === "dark";
+}
+
 /* ---------- login ---------- */
 async function doLogin() {
   var msg = $("login-msg");
@@ -309,6 +339,7 @@ function exportCsv() {
 
 /* ---------- init ---------- */
 document.addEventListener("DOMContentLoaded", async () => {
+  initGuruTheme();
   $("btn-guru-login").addEventListener("click", doLogin);
   $("guru-password").addEventListener("keydown", (e) => { if (e.key === "Enter") doLogin(); });
   $("btn-guru-refresh").addEventListener("click", loadStudents);
