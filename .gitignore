@@ -4,3 +4,5 @@ data/users.json
 data/users.json.tmp
 *.log
 .env
+.neon
+.env.local

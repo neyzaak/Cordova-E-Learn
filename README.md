@@ -42,8 +42,9 @@ DATABASE_URL=postgresql://...node server.js
 - Kalau `DATABASE_URL` **tidak diisi** → server memakai file `data/users.json` seperti biasa (tanpa perlu `npm install`).
 - Kalau diisi → akun & progres tersimpan di PostgreSQL (awet), dan jika DB masih kosong server otomatis
   mengimpor akun lama dari `data/users.json` sekali.
-- Contoh deploy gratis: Render (Web Service, Node, start `node server.js`, tambahkan variabel
-  `DATABASE_URL` dan `GURU_PASSWORD`). Projek ini tidak butuh framework — murni Node + paket `pg`.
+- Contoh deploy gratis **tanpa kartu kredit**: **Koyeb** (web service dari repo GitHub, build via
+  `Dockerfile`, start otomatis `node server.js`) + **Neon** (PostgreSQL gratis) — isi variabel
+  `DATABASE_URL` dan `GURU_PASSWORD` di dashboard Koyeb. Cadangan: Render (terkadang minta kartu kredit saat verifikasi akun).
 
 **Agar setiap murid punya data sendiri:** semua perangkat (HP/komputer) di Wi-Fi atau jaringan yang sama
 bisa membuka server dari laptop guru: `http://IP-laptop:8710` (contoh: `http://15.22.33.128:8710`).
