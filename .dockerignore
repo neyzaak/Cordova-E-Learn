@@ -1,0 +1,15 @@
+# Jangan bawa file lokal/rahasia ke image Docker
+node_modules/
+npm-debug.log*
+.env
+.env.local
+.neon
+data/
+.git
+.gitignore
+agents-test/
+.agents/
+*.log
+skills-lock.json
+neon.ts
+npg_*
