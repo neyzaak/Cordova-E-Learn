@@ -71,7 +71,7 @@ function initGuruTheme() {
     false
   );
   const b = $("btn-guru-theme");
-  if (b) b.addEventListener("click", () => applyGuruTheme(rootIsDark(), true));
+  if (b) b.addEventListener("click", () => applyGuruTheme(!rootIsDark(), true));
 }
 function rootIsDark() {
   return document.documentElement.getAttribute("data-theme") === "dark";
