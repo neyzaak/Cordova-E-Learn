@@ -100,7 +100,11 @@
     const statusEl = document.getElementById("auth-status");
     const userEl = document.getElementById("sidebar-user");
     const namaEl = document.getElementById("user-nama");
-    if (userEl) userEl.hidden = !(online && username);
+    const btnAccount = document.getElementById("btn-account");
+    // kartu akun & tombol ⚙️ hanya untuk akun server; tamu (akun lokal) tidak dapat membuka pengaturan
+    const isAccount = Boolean(online && username);
+    if (userEl) userEl.hidden = !isAccount;
+    if (btnAccount) btnAccount.hidden = !isAccount;
     if (namaEl) namaEl.textContent = nama || username || "";
     if (statusEl) {
       statusEl.textContent = online
@@ -367,6 +371,7 @@
 
     function openAccount() {
       if (!accountOverlay) return;
+      if (window.Auth.isGuest()) return; // akun lokal: pengaturan akun tidak bisa dibuka
       const uname = document.getElementById("account-user");
       if (uname) {
         uname.textContent = window.Auth.getUsername() + " (" + (window.Auth.getNama() || window.Auth.getUsername()) + ")";
@@ -401,6 +406,7 @@
     if (sidebarUser) {
       sidebarUser.addEventListener("click", (e) => {
         if (e.target.closest("#btn-logout")) return;
+        if (window.Auth.isGuest()) return; // akun lokal: pengaturan akun tidak bisa diklik
         openAccount();
       });
     }
@@ -410,6 +416,7 @@
     if (profileForm) {
       profileForm.addEventListener("submit", async (e) => {
         e.preventDefault();
+        if (window.Auth.isGuest()) return; // akun lokal: tidak bisa menyimpan pengaturan
         const msg = document.getElementById("profile-msg");
         const submit = document.getElementById("profile-submit");
         const namaInput = document.getElementById("profile-nama");
@@ -439,6 +446,7 @@
     if (passwordForm) {
       passwordForm.addEventListener("submit", async (e) => {
         e.preventDefault();
+        if (window.Auth.isGuest()) return; // akun lokal: tidak bisa ganti password
         const msg = document.getElementById("pw-msg");
         const submit = document.getElementById("pw-submit");
         const oldPw = document.getElementById("pw-old").value;

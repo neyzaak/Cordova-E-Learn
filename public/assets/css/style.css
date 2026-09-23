@@ -725,6 +725,8 @@ img { max-width: 100%; display: block; }
   transition: background .2s ease;
 }
 .sidebar__user:hover { background: rgba(255,255,255,.15); }
+.sidebar__user[hidden],
+.user-settings[hidden] { display: none !important; }
 .sidebar__user .su-ico { font-size: 17px; }
 .sidebar__user strong {
   flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
