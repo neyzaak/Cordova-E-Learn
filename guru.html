@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Laporan Guru — Cordova E-Learn</title>
+  <link rel="icon" type="image/png" href="assets/img/favicon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png" />
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Amiri:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/style.css" />
+  <style>
+    body { background: linear-gradient(160deg, #f4fbf6, #e8f5ec 40%, #fdf7e7); min-height: 100vh; }
+    .guru-wrap { max-width: 980px; margin: 0 auto; padding: 28px 18px 60px; }
+    .guru-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; }
+    .guru-head .ght-ico {
+      width: 52px; height: 52px; display: grid; place-items: center; font-size: 26px;
+      background: linear-gradient(135deg, var(--emerald-600), var(--emerald-900));
+      border-radius: 16px; color: #fff; box-shadow: var(--shadow-md);
+    }
+    .guru-head h1 { font-size: 22px; color: var(--emerald-900); }
+    .guru-head p { font-size: 12.5px; color: var(--ink-soft); font-weight: 600; }
+    .guru-head .spacer { flex: 1; }
+
+    /* ---- tampilan login ---- */
+    .guru-login { display: grid; place-items: center; min-height: 68vh; }
+    .guru-login .card { width: 100%; max-width: 380px; padding: 26px 24px; text-align: center; }
+    .guru-login .card h3 { font-size: 19px; color: var(--emerald-900); margin-bottom: 4px; }
+    .guru-login .card > p { font-size: 12.5px; color: var(--ink-soft); margin-bottom: 14px; }
+    /* ikon login guru: tetap tile emerald dengan emoji 👨‍🏫 (bukan logo murid) */
+    .guru-login .auth-logo {
+      display: grid; place-items: center; font-size: 32px; padding: 0;
+      background: linear-gradient(135deg, var(--emerald-600), var(--emerald-900));
+      border-radius: 18px; box-shadow: 0 8px 20px rgba(6,78,59,.35);
+    }
+    .guru-login label { display: block; text-align: left; font-size: 12px; font-weight: 800; color: var(--ink-soft); }
+    .guru-login input {
+      width: 100%; margin-top: 4px; padding: 11px 14px; font-size: 16px;
+      border: 1.5px solid rgba(6,78,59,.15); border-radius: 12px;
+    }
+    .guru-msg { font-size: 12.5px; color: var(--danger); min-height: 18px; margin: 8px 0 0; font-weight: 700; }
+    .guru-login .btn { width: 100%; margin-top: 10px; }
+
+    /* ---- ringkasan ---- */
+    .guru-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(150px,100%), 1fr)); gap: 10px; margin-bottom: 16px; }
+    .gstat { background: #fff; border: 1px solid rgba(6,78,59,.12); border-radius: var(--radius-sm); padding: 12px 14px; box-shadow: var(--shadow-sm); }
+    .gstat .gs-val { font-size: 20px; font-weight: 800; color: var(--emerald-800); }
+    .gstat .gs-label { font-size: 11px; font-weight: 700; color: var(--ink-soft); }
+
+    /* ---- toolbar & tabel ---- */
+    .guru-toolbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 10px; }
+    .guru-toolbar input[type="search"] {
+      flex: 1; min-width: 160px; padding: 9px 12px; font-size: 14px;
+      border: 1.5px solid rgba(6,78,59,.15); border-radius: 10px;
+    }
+    .guru-toolbar select { padding: 9px 10px; font-size: 13px; font-weight: 700; border-radius: 10px; border: 1.5px solid rgba(6,78,59,.15); background: #fff; }
+    .gwrap { overflow-x: auto; border-radius: var(--radius-sm); }
+    table.gtable { width: 100%; min-width: 720px; border-collapse: collapse; background: #fff; }
+    .gtable th {
+      position: sticky; top: 0; background: var(--emerald-800); color: #fff;
+      font-size: 11.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .4px;
+      padding: 10px 10px; text-align: left;
+    }
+    .gtable td { padding: 10px; font-size: 13px; border-bottom: 1px solid rgba(6,78,59,.07); color: var(--ink); vertical-align: middle; }
+    .gtable tr:nth-child(even) td { background: #f7fbf8; }
+    .gtable td.nm { font-weight: 800; }
+    .gtable td.pts { font-weight: 800; color: var(--gold-600); }
+    .badge { display: inline-block; padding: 3px 9px; border-radius: 99px; font-size: 11px; font-weight: 800; }
+    .b-green { background: var(--emerald-100); color: var(--emerald-800); }
+    .b-gold { background: var(--gold-100); color: var(--gold-600); }
+    .b-red { background: #ffe4e6; color: var(--danger); }
+    .row-btn { font-size: 11.5px; font-weight: 800; color: var(--emerald-700); background: var(--emerald-50); border: 1px solid var(--emerald-200); padding: 5px 10px; border-radius: 99px; }
+    .row-detail { display: none; background: #fbfdf9 !important; }
+    .row-detail.show { display: table-row; }
+    .row-detail td { font-size: 12.5px; color: var(--ink-soft); }
+    .hafal-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+    .hafal-tags span { background: var(--emerald-50); border: 1px solid var(--emerald-200); color: var(--emerald-800); font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 8px; }
+    .guru-empty { text-align: center; padding: 34px 10px; color: var(--ink-soft); font-weight: 700; font-size: 13.5px; }
+    .guru-note { font-size: 11.5px; color: var(--ink-soft); margin: 8px 0 0; }
+    .footer-link { margin-top: 22px; text-align: center; font-size: 12.5px; color: var(--ink-soft); }
+    .footer-link a { color: var(--emerald-700); font-weight: 800; }
+  </style>
+</head>
+<body>
+  <div class="guru-wrap">
+
+    <!-- TAMPILAN LOGIN -->
+    <div class="guru-login" id="view-login">
+      <div class="card">
+        <div class="auth-logo">👨‍🏫</div>
+        <h3>Laporan Progres Murid</h3>
+        <p>Halaman khusus guru. Masukkan kata sandi guru untuk membuka laporan.</p>
+        <label for="guru-password">Kata sandi guru</label>
+        <input type="password" id="guru-password" autocomplete="current-password" placeholder="••••••" />
+        <p class="guru-msg" id="login-msg"></p>
+        <button class="btn btn-gold" id="btn-guru-login">🔓&nbsp; Buka Laporan</button>
+        <p class="guru-note">Kata sandi bawaan: <code>guru123</code> — ganti lewat <code>GURU_PASSWORD</code> saat menjalankan server.</p>
+        <p class="footer-link"><a href="index.html">← Kembali ke aplikasi murid</a></p>
+      </div>
+    </div>
+
+    <!-- TAMPILAN DASHBOARD -->
+    <div id="view-dashboard" hidden>
+      <div class="guru-head">
+        <div class="ght-ico">📊</div>
+        <div>
+          <h1>Laporan Progres Murid</h1>
+          <p id="guru-sub">Memuat data…</p>
+        </div>
+        <div class="spacer"></div>
+        <button class="btn btn-ghost sm" id="btn-guru-refresh">🔄 Muat Ulang</button>
+        <button class="btn btn-ghost sm" id="btn-guru-csv">📥 Unduh CSV</button>
+        <button class="btn btn-ghost sm" id="btn-guru-logout">🚪 Keluar</button>
+      </div>
+
+      <div class="guru-stats" id="guru-stats"></div>
+
+      <div class="guru-toolbar">
+        <input type="search" id="guru-search" placeholder="Cari nama murid…" />
+        <select id="guru-sort">
+          <option value="points">Urut: Poin</option>
+          <option value="name">Urut: Nama</option>
+          <option value="hafal">Urut: Hafalan</option>
+          <option value="quiz">Urut: Kuis Selesai</option>
+          <option value="active">Urut: Terakhir Aktif</option>
+        </select>
+      </div>
+
+      <div class="gwrap">
+        <table class="gtable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nama Murid</th>
+              <th>Poin ⭐</th>
+              <th>Hafalan</th>
+              <th>Skor Terbaik</th>
+              <th>Akurasi</th>
+              <th>Soal Dijawab</th>
+              <th>Kuis</th>
+              <th>Terakhir Aktif</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="guru-tbody"></tbody>
+        </table>
+      </div>
+      <p class="guru-note" id="guru-detail-note"></p>
+    </div>
+  </div>
+
+  <script src="assets/js/guru.js"></script>
+</body>
+</html>

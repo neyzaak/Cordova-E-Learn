@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#065f46" />
+<script>
+  (function () {
+    try {
+      var t = localStorage.getItem("tazkiah-theme");
+      if (t ? t === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        document.documentElement.setAttribute("data-theme", "dark");
+      }
+    } catch (e) {}
+  })();
+</script>
+<title>Cordova E-Learn — Belajar Al-Qur'an Interaktif</title>
+<meta name="description" content="Website pembelajaran Al-Qur'an interaktif untuk pelajar SMP: baca surah, belajar tajwid, doa harian, dan kuis seru." />
+<link rel="icon" type="image/png" href="assets/img/favicon.png" />
+<link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32.png" />
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+
+<div class="bg-decor" aria-hidden="true"></div>
+
+<!-- ======= SIDEBAR ======= -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar__logo">
+    <img class="logo-badge" src="assets/img/favicon.png" alt="Logo Cordova E-Learn" />
+    <div>
+      <h1>Cordova E-Learn</h1>
+      <p>Belajar Qur'an • Anak SMP</p>
+    </div>
+  </div>
+
+  <nav class="sidebar__nav">
+    <button class="nav-item" data-page="beranda">
+      <span class="nav-ico">🏠</span><span>Beranda</span>
+    </button>
+    <button class="nav-item" data-page="surah">
+      <span class="nav-ico">📖</span><span>Baca Surah</span>
+    </button>
+    <button class="nav-item" data-page="tajwid">
+      <span class="nav-ico">✨</span><span>Belajar Tajwid</span>
+    </button>
+    <button class="nav-item" data-page="hijaiyah">
+      <span class="nav-ico">🔤</span><span>Hijaiyah</span>
+    </button>
+    <button class="nav-item" data-page="doa">
+      <span class="nav-ico">🤲</span><span>Doa Harian</span>
+    </button>
+    <button class="nav-item" data-page="kuis">
+      <span class="nav-ico">🧠</span><span>Kuis Seru</span>
+    </button>
+    <button class="nav-item" data-page="klasemen">
+      <span class="nav-ico">🏆</span><span>Klasemen</span>
+    </button>
+    <button class="nav-item" data-page="loyalitas">
+      <span class="nav-ico">🔥</span><span>Login &amp; Loyalitas</span>
+    </button>
+  </nav>
+
+  <div class="sidebar__progress">
+    <div class="sp-head">
+      <span>🌟 Progres Kamu</span>
+      <strong id="sidebar-points">0</strong>
+    </div>
+    <div class="sp-bar"><span id="sidebar-progress-bar"></span></div>
+    <p id="sidebar-motivation">Ayo mulai belajar hari ini!</p>
+    <p class="auth-status" id="auth-status">Menghubungkan server…</p>
+  </div>
+
+  <div class="sidebar__user" id="sidebar-user" hidden>
+    <span class="su-ico">👤</span>
+    <strong id="user-nama"></strong>
+    <button class="user-logout" id="btn-logout" title="Keluar dari akun">Keluar</button>
+  </div>
+
+  <div class="sidebar__footer">
+    <p>Dibuat dengan 💚 untuk pelajar hebat Indonesia</p>
+  </div>
+</aside>
+
+<div class="overlay" id="overlay" aria-hidden="true"></div>
+
+<!-- ======= MAIN ======= -->
+<main class="main">
+  <header class="topbar">
+    <button class="hamburger" id="hamburger" aria-label="Buka menu">☰</button>
+    <div class="topbar__title">
+      <h2 id="page-title">Beranda</h2>
+      <p id="page-subtitle">Assalamu'alaikum, selamat datang! 🌙</p>
+    </div>
+    <div class="topbar-right">
+      <button class="theme-toggle" id="btn-theme" aria-label="Mode gelap" title="Ganti ke mode gelap">🌙</button>
+      <div class="points-chip" title="Poin kamu">
+        <span>⭐</span>
+        <strong id="topbar-points">0</strong>
+        <em>pts</em>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== BERANDA ===== -->
+  <section class="page active" id="page-beranda">
+    <div class="hero">
+      <div class="hero__text">
+        <span class="hero__tag">🌙 Ayo Raih Pahala Setiap Hari</span>
+        <h2 class="hero__title">Belajar Al-Qur'an<br /><em>Jadi Seru</em> &amp; Menyenangkan!</h2>
+        <p class="hero__desc">
+          Baca surah Juz 'Amma dengan terjemahan, pelajari tajwid, hafalkan doa harian,
+          lalu uji kemampuanmu lewat kuis interaktif. Semakin rajin belajar, semakin banyak bintangmu! ⭐
+        </p>
+        <div class="hero__cta">
+          <button class="btn btn-gold" data-page="surah">📖&nbsp; Mulai Baca Surah</button>
+          <button class="btn btn-ghost" data-page="kuis">🧠&nbsp; Coba Kuis</button>
+        </div>
+      </div>
+      <div class="hero__art" aria-hidden="true">
+        <div class="moon">🌙</div>
+        <div class="star s1">✦</div>
+        <div class="star s2">★</div>
+        <div class="star s3">✦</div>
+        <div class="quran">📖</div>
+        <div class="cloud c1">☁️</div>
+        <div class="cloud c2">☁️</div>
+        <div class="lamp">🕌</div>
+      </div>
+    </div>
+
+    <div class="stats-strip">
+      <div class="stat"><strong id="stat-surah">38</strong><span>Surah Juz 30</span></div>
+      <div class="stat"><strong id="stat-ayat">—</strong><span>Ayat siap dibaca</span></div>
+      <div class="stat"><strong>14</strong><span>Aturan Tajwid</span></div>
+      <div class="stat"><strong>10+</strong><span>Doa Harian</span></div>
+    </div>
+
+    <div class="card login-card" id="login-milestone">
+      <div class="login-head">
+        <div class="login-head__left">
+          <span class="login-fire">🔥</span>
+          <div>
+            <h3>Login Harian &amp; Loyalitas</h3>
+            <p id="login-sub">Rekor terbaik: 0 hari — mulai hari ini!</p>
+          </div>
+        </div>
+        <div class="login-streak" title="Hari login beruntun saat ini">
+          <strong id="login-streak">0</strong><span>hari 🔥</span>
+        </div>
+      </div>
+      <div class="login-month">
+        <div class="login-month__bar"><span id="login-month-bar"></span></div>
+        <div class="login-month__meta">
+          <span id="login-month-text">🥉 Perunggu · 0 dari 7 hari beruntun</span>
+          <span id="login-month-next">Tingkat berikutnya: 🥈 Perak (14 hari) — hadiah +15 poin</span>
+        </div>
+      </div>
+      <div class="login-milestone__link">
+        <button class="link-btn" data-page="loyalitas">Lihat detail login &amp; kalender →</button>
+      </div>
+    </div>
+
+    <div class="home-grid">
+      <div class="card feature-card">
+        <span class="fc-ico">📖</span>
+        <h3>Baca Surah</h3>
+        <p>Teks Arab, latin, dan arti per ayat. Ada tombol hafalan biar mantap!</p>
+        <button class="link-btn" data-page="surah">Buka →</button>
+      </div>
+      <div class="card feature-card">
+        <span class="fc-ico">✨</span>
+        <h3>Belajar Tajwid</h3>
+        <p>Hukum bacaan lengkap dengan contoh dari Al-Qur'an, dijelaskan singkat.</p>
+        <button class="link-btn" data-page="tajwid">Buka →</button>
+      </div>
+      <div class="card feature-card">
+        <span class="fc-ico">🔤</span>
+        <h3>Kenali Hijaiyah</h3>
+        <p>29 huruf Arab dengan cara baca dan contoh kata. Cocok buat pemula.</p>
+        <button class="link-btn" data-page="hijaiyah">Buka →</button>
+      </div>
+      <div class="card feature-card">
+        <span class="fc-ico">🤲</span>
+        <h3>Doa Harian</h3>
+        <p>Kumpulan doa pendek untuk kegiatan sehari-hari, mudah dihafal.</p>
+        <button class="link-btn" data-page="doa">Buka →</button>
+      </div>
+      <div class="card feature-card">
+        <span class="fc-ico">🧠</span>
+        <h3>Kuis Seru</h3>
+        <p>Uji pemahamanmu, kumpulkan poin, dan jadilah juara Qur'an!</p>
+        <button class="link-btn" data-page="kuis">Buka →</button>
+      </div>
+      <div class="card feature-card">
+        <span class="fc-ico">🏆</span>
+        <h3>Klasemen</h3>
+        <p>Lihat peringkatmu dan siapa yang paling rajin belajar di kelas!</p>
+        <button class="link-btn" data-page="klasemen">Lihat →</button>
+      </div>
+    </div>
+
+    <div class="home-bottom">
+      <div class="card quote-card">
+        <span class="quote-ar">وَرَتِّلِ الْقُرْآنَ تَرْتِيلًا</span>
+        <p class="quote-latin">"Wa rattilil-qur'āna tartīlā"</p>
+        <p class="quote-id">— Bacalah Al-Qur'an itu dengan perlahan-lahan (tartil).<br /><small>QS. Al-Muzzammil: 4</small></p>
+      </div>
+      <div class="card daily-card">
+        <h3>📌 Loncat Cepat ke Surah</h3>
+        <div class="chip-list" id="home-surah-chips"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SURAH LIST ===== -->
+  <section class="page" id="page-surah">
+    <div class="page-head">
+      <h3>Pilih Surah Juz 'Amma</h3>
+      <p>Mulai dari surah pendek yang familiar atau jelajahi semuanya. 👇</p>
+    </div>
+    <div class="toolbar">
+      <input type="search" id="surah-search" placeholder="Cari surah… (misal: nas, ikhlas)" />
+      <div class="seg" id="surah-filter">
+        <button class="seg-btn active" data-filter="semua">Semua</button>
+        <button class="seg-btn" data-filter="favorit">Disimpan ⭐</button>
+        <button class="seg-btn" data-filter="sering">Paling Dipelajari</button>
+      </div>
+    </div>
+    <div class="surah-grid" id="surah-grid"></div>
+  </section>
+
+  <!-- ===== SURAH DETAIL TILE (rendered) ===== -->
+  <section class="page" id="page-belajar">
+    <div class="learn-head card" id="learn-head"></div>
+    <div class="player-bar card" id="player-bar"></div>
+    <div class="learn-toolbar">
+      <label class="switch">
+        <input type="checkbox" id="toggle-arti" checked />
+        <span class="switch__track"></span>
+        <span class="switch__label">Tampilkan Arti &amp; Latin</span>
+      </label>
+      <button class="btn btn-soft" id="btn-mark-hafal">🎯 Tandai Hafal</button>
+    </div>
+    <div class="verse-list" id="verse-list"></div>
+    <div class="learn-nav">
+      <button class="btn btn-ghost dark" id="btn-prev">← Surah Sebelumnya</button>
+      <button class="btn btn-ghost dark" id="btn-next">Surah Berikutnya →</button>
+    </div>
+  </section>
+
+  <!-- ===== TAJWID ===== -->
+  <section class="page" id="page-tajwid">
+    <div class="page-head">
+      <h3>✨ Belajar Tajwid: Panduan Indah Membaca Al-Qur'an</h3>
+      <p>Tekan kartu untuk melihat contoh bacaan lebih lengkap.</p>
+    </div>
+    <div class="rules-grid" id="rules-grid"></div>
+  </section>
+
+  <!-- ===== HIJAIYAH ===== -->
+  <section class="page" id="page-hijaiyah">
+    <div class="page-head">
+      <h3>🔤 Mengenal Huruf Hijaiyah</h3>
+      <p>Klik huruf mana pun untuk melihat cara membacanya. Ada 29 huruf (termasuk hamzah). 👆</p>
+    </div>
+    <div class="hijaiyah-grid" id="hijaiyah-grid"></div>
+  </section>
+
+  <!-- ===== DOA ===== -->
+  <section class="page" id="page-doa">
+    <div class="page-head">
+      <h3>🤲 Kumpulan Doa Harian</h3>
+      <p>Doa pendek untuk menemani aktivitasmu sehari-hari, yuk dihafal!</p>
+    </div>
+    <div class="doa-grid" id="doa-grid"></div>
+  </section>
+
+  <!-- ===== KUIS ===== -->
+  <section class="page" id="page-kuis">
+    <div class="quiz-intro card" id="quiz-intro">
+      <div class="quiz-intro__art">🧠</div>
+      <h3>Kuis Seru Al-Qur'an</h3>
+      <p>10 soal pilihan ganda tentang surah, tajwid, dan ilmu Qur'an.<br />Dapatkan <strong>10 poin</strong> per jawaban benar. Siap? 💪</p>
+      <div class="quiz-intro__meta">
+        <span>📝 10 soal</span>
+        <span>⏱️ ±5 menit</span>
+        <span>🏆 Poin maks 100</span>
+      </div>
+      <div class="quiz-stage-box" id="quiz-stage-box">
+        <span class="quiz-stage-label">Tingkat kesulitan</span>
+        <strong id="quiz-stage-name">Pemula</strong>
+        <p id="quiz-stage-desc"></p>
+        <div class="quiz-stage-track"><span id="quiz-stage-bar"></span></div>
+      </div>
+      <button class="btn btn-gold" id="btn-start-quiz">🚀&nbsp; Mulai Kuis</button>
+      <div class="quiz-best" id="quiz-best"></div>
+    </div>
+
+    <div class="quiz-box card hidden" id="quiz-box">
+      <div class="quiz-top">
+        <span class="quiz-progress" id="quiz-progress">Soal 1/10</span>
+        <span class="quiz-score" id="quiz-score">⭐ 0</span>
+      </div>
+      <div class="quiz-track"><span id="quiz-track-bar"></span></div>
+      <h3 class="quiz-question" id="quiz-question"></h3>
+      <div class="quiz-options" id="quiz-options"></div>
+      <div class="quiz-explain hidden" id="quiz-explain"></div>
+      <div class="quiz-nav">
+        <button class="btn btn-ghost dark hidden" id="btn-quiz-prev">← Kembali</button>
+        <button class="btn btn-gold hidden" id="btn-quiz-next">Soal Berikutnya →</button>
+        <button class="btn btn-gold hidden" id="btn-quiz-finish">Lihat Hasil 🏁</button>
+      </div>
+    </div>
+
+    <div class="quiz-result card hidden" id="quiz-result">
+      <div class="result-art" id="result-art">🏆</div>
+      <h3 id="result-title">Luar Biasa!</h3>
+      <div class="result-score">
+        <strong id="result-score-num">90</strong><span>/ 100</span>
+      </div>
+      <p id="result-answer-count">8 benar dari 10 soal</p>
+      <p class="result-motivation" id="result-motivation"></p>
+      <div class="result-actions">
+        <button class="btn btn-gold" id="btn-retry">🔄&nbsp; Ulangi Kuis</button>
+        <button class="btn btn-ghost dark" data-page="surah">📖&nbsp; Belajar Dulu</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== KLASEMEN ===== -->
+  <section class="page" id="page-klasemen">
+    <div class="page-head">
+      <h3>🏆 Klasemen Kelas</h3>
+      <p>Peringkat siswa berdasarkan bintang ⭐ yang dikumpulkan dari belajar &amp; kuis.</p>
+    </div>
+    <div class="leader-toolbar">
+      <p class="leader-note" id="leader-note">Memuat klasemen…</p>
+      <button class="btn btn-ghost sm" id="btn-leader-reload">🔄 Muat Ulang</button>
+    </div>
+    <div class="podium" id="leader-podium"></div>
+    <div class="card leader-card">
+      <div class="leader-head">
+        <h4>📋 Daftar Peringkat</h4>
+        <span class="leader-count" id="leader-count"></span>
+      </div>
+      <div id="leader-list"></div>
+    </div>
+  </section>
+
+  <!-- ===== LOGIN & LOYALITAS ===== -->
+  <section class="page" id="page-loyalitas">
+    <div class="page-head">
+      <h3>🔥 Login Harian &amp; Loyalitas</h3>
+      <p>Rajin mampir tiap hari = poin bonus + naik tingkat loyalitas 🥉 → 🥈 → 🥇</p>
+    </div>
+    <div class="loy-grid" id="loy-grid"></div>
+    <div class="learn-nav">
+      <button class="btn btn-ghost dark" data-page="beranda">← Kembali ke Beranda</button>
+    </div>
+  </section>
+</main>
+
+<!-- ======= BOTTOM NAV (mobile) ======= -->
+<nav class="bottom-nav" id="bottom-nav">
+  <button data-page="beranda"><span>🏠</span><em>Beranda</em></button>
+  <button data-page="surah"><span>📖</span><em>Surah</em></button>
+  <button data-page="kuis"><span>🧠</span><em>Kuis</em></button>
+  <button data-page="doa"><span>🤲</span><em>Doa</em></button>
+  <button data-page="tajwid"><span>✨</span><em>Tajwid</em></button>
+</nav>
+
+<!-- ======= OVERLAY AKUN MURID ======= -->
+<div class="auth-overlay" id="auth-overlay">
+  <div class="auth-card card">
+    <img class="auth-logo" src="assets/img/favicon.png" alt="Logo Cordova E-Learn" />
+    <h3 class="auth-title" id="auth-title">Masuk ke akun murid</h3>
+    <p class="auth-sub">Setiap murid punya akun sendiri, jadi progres belajar tidak akan tertukar.</p>
+    <div class="auth-tabs">
+      <button type="button" class="auth-tab active" id="tab-login">Masuk</button>
+      <button type="button" class="auth-tab" id="tab-register">Daftar</button>
+    </div>
+    <form id="auth-form" novalidate>
+      <label for="auth-username">Username
+        <input id="auth-username" placeholder="cth: budi3" autocomplete="username" spellcheck="false" required />
+      </label>
+      <div id="field-nama" hidden>
+        <label for="auth-nama">Nama Lengkap
+          <input id="auth-nama" placeholder="cth: Budi Santoso" autocomplete="name" />
+        </label>
+      </div>
+      <label for="auth-password">Password
+        <input id="auth-password" type="password" placeholder="••••••" autocomplete="current-password" required />
+      </label>
+      <p class="auth-msg" id="auth-msg"></p>
+      <button type="submit" class="btn btn-gold" id="auth-submit">Masuk</button>
+      <button type="button" class="link-btn auth-guest" id="auth-guest">Lewati — main tanpa akun (lokal)</button>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<canvas id="confetti" aria-hidden="true"></canvas>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/auth.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

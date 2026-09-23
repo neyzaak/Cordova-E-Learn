@@ -1,0 +1,6 @@
+# File/data lokal yang TIDAK boleh masuk repositori publik
+node_modules/
+data/users.json
+data/users.json.tmp
+*.log
+.env
