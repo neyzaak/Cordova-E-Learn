@@ -174,6 +174,26 @@ async function guruCheck(token) {
   }
 }
 
+/* Muat ulang daftar murid dari DB setiap panggilan API, agar semua
+   function Vercel membaca kondisi terbaru (termasuk setelah akun
+   dihapus lewat instance lain). */
+async function refreshUsersFromDb() {
+  if (!USE_DB || !pgPool) return;
+  try {
+    const { rows } = await pgPool.query("SELECT username, nama, salt, hash, token, progress FROM users");
+    users = rows.map((r) => ({
+      username: r.username,
+      nama: r.nama,
+      salt: r.salt,
+      hash: r.hash,
+      token: r.token || null,
+      progress: normalizeProgressJson(r.progress)
+    }));
+  } catch (e) {
+    console.error("[db] gagal refresh users:", e.message);
+  }
+}
+
 async function persistUser(u) {
   if (!USE_DB) {
     saveUsers(); // mode file: tulis seluruh data seperti sebelumnya
@@ -295,6 +315,9 @@ async function handleApi(req, res, pathname) {
     });
     return res.end();
   }
+
+  // pastikan memori selalu sesuai DB (mode cloud)
+  await refreshUsersFromDb();
 
   if (pathname === "/api/ping" && req.method === "GET") {
     return sendJSON(res, 200, ok({ status: "ok", total: users.length }));
