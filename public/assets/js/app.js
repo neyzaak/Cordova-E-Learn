@@ -742,6 +742,9 @@ function renderTajwid() {
   TAJWID.forEach((r) => {
     const card = document.createElement("article");
     card.className = "card rule-card";
+    card.setAttribute("role", "button");
+    card.tabIndex = 0;
+    const ex = r.examples[0];
     card.innerHTML = `
       <div class="rule-head">
         <span class="rule-ico">${r.icon}</span>
@@ -752,11 +755,48 @@ function renderTajwid() {
       </div>
       <p class="rule-desc">${r.desc}</p>
       <div class="rule-example">
-        <span class="ex-ar">${r.example.ar}</span>
-        <span><strong>Contoh:</strong> ${r.example.latin}</span>
-      </div>`;
+        <span class="ex-ar">${ex.ar}</span>
+        <span><strong>Contoh:</strong> ${ex.latin}</span>
+      </div>
+      <span class="rule-more">👆 Tekan — lihat 5 contoh lengkap</span>`;
+    const open = () => openTajwid(r);
+    card.addEventListener("click", open);
+    card.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        open();
+      }
+    });
     grid.appendChild(card);
   });
+}
+
+/* ------------------------------------------------------------
+   POP-UP CONTOH TAJWID — 5 contoh per hukum
+   ------------------------------------------------------------ */
+function openTajwid(r) {
+  document.getElementById("tjm-ico").textContent = r.icon;
+  document.getElementById("tjm-name").textContent = r.name;
+  document.getElementById("tjm-cat").textContent = r.cat;
+  document.getElementById("tjm-desc").textContent = r.desc;
+  const wrap = document.getElementById("tjm-examples");
+  wrap.innerHTML = "";
+  r.examples.forEach((ex, i) => {
+    const row = document.createElement("div");
+    row.className = "tjm-ex";
+    row.innerHTML = `
+      <span class="tjm-n">${i + 1}</span>
+      <div class="tjm-txt">
+        <span class="tjm-ar">${ex.ar}</span>
+        <span class="tjm-lat">${ex.latin}</span>
+      </div>`;
+    wrap.appendChild(row);
+  });
+  document.getElementById("tajwid-overlay").classList.add("show");
+}
+
+function closeTajwid() {
+  document.getElementById("tajwid-overlay").classList.remove("show");
 }
 
 /* ============================================================
@@ -1266,6 +1306,16 @@ function init() {
   });
   document.getElementById("hamburger").addEventListener("click", openSidebar);
   document.getElementById("overlay").addEventListener("click", closeSidebar);
+
+  // pop-up contoh tajwid
+  document.getElementById("tajwid-close").addEventListener("click", closeTajwid);
+  document.getElementById("tajwid-done").addEventListener("click", closeTajwid);
+  document.getElementById("tajwid-overlay").addEventListener("click", (e) => {
+    if (e.target.id === "tajwid-overlay") closeTajwid();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeTajwid();
+  });
 
   // surah list interactions
   document.getElementById("surah-search").addEventListener("input", (e) => {

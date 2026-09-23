@@ -3252,140 +3252,182 @@ const TAJWID = [
     "cat": "Nun Sukun & Tanwin",
     "icon": "🌊",
     "desc": "Nun sukun/tanwin bertemu huruf ي ن م و dibaca melebur dengan dengung.",
-    "example": {
-      "ar": "مِنْ يَوْمِ",
-      "latin": "min yaum"
-    }
+    "examples": [
+      { "ar": "مِنْ يَوْمِ", "latin": "min yaum" },
+      { "ar": "مِنْ نِعْمَةٍ", "latin": "min ni'mah" },
+      { "ar": "مِنْ مَالٍ", "latin": "min māl" },
+      { "ar": "عِلْمًا نَافِعًا", "latin": "'ilman nāfi'ā" },
+      { "ar": "مِنْ وَرَائِهِمْ", "latin": "min warā'ihim" }
+    ]
   },
   {
     "name": "Idgham Bilaghunnah",
     "cat": "Nun Sukun & Tanwin",
     "icon": "🎵",
     "desc": "Nun sukun/tanwin bertemu huruf ل ر dibaca melebur tanpa dengung.",
-    "example": {
-      "ar": "مِنْ رَبِّكَ",
-      "latin": "mir-rabbika"
-    }
+    "examples": [
+      { "ar": "مِنْ رَبِّكَ", "latin": "mir-rabbika" },
+      { "ar": "مَنْ لَمْ يَتُبْ", "latin": "mal-lam yatub" },
+      { "ar": "هُدًى لِّلْمُتَّقِينَ", "latin": "hudan lil-muttaqīn" },
+      { "ar": "مِنْ لَدُنِّي", "latin": "mil-ladunnī" },
+      { "ar": "مَنْ رَزَقْنَاهُ", "latin": "mar-razaqnāhu" }
+    ]
   },
   {
     "name": "Ikhfa Haqiqi",
     "cat": "Nun Sukun & Tanwin",
     "icon": "🌫️",
     "desc": "Nun sukun/tanwin bertemu 15 huruf ikhfa, dibaca samar antara izhar dan idgham.",
-    "example": {
-      "ar": "وَأَنْتُمْ",
-      "latin": "wa antum"
-    }
+    "examples": [
+      { "ar": "وَأَنْتُمْ", "latin": "wa antum" },
+      { "ar": "فَأَنْذَرْتُكُمْ", "latin": "fa-andzartukum" },
+      { "ar": "مِنْ تَحْتِهَا", "latin": "min taḥtihā" },
+      { "ar": "إِنْ كَانَ", "latin": "in kāna" },
+      { "ar": "مِنْ شَيْءٍ", "latin": "min syai'in" }
+    ]
   },
   {
     "name": "Iqlab",
     "cat": "Nun Sukun & Tanwin",
     "icon": "🔄",
     "desc": "Nun sukun/tanwin bertemu huruf ب, berubah menjadi suara mim (m) dengan dengung.",
-    "example": {
-      "ar": "مِنْ بَعْدِ",
-      "latin": "mim-ba'di"
-    }
+    "examples": [
+      { "ar": "مِنْ بَعْدِ", "latin": "mim-ba'di" },
+      { "ar": "أَنْبِيَاءَ", "latin": "anbiyā'" },
+      { "ar": "سَمِيعٌ بَصِيرٌ", "latin": "samī'um-baṣīr" },
+      { "ar": "مِنْ بَيْنِهِمْ", "latin": "mim-bainihim" },
+      { "ar": "لَيُنْبَذَنَّ", "latin": "layumbadzanna" }
+    ]
   },
   {
     "name": "Izhar Halqi",
     "cat": "Nun Sukun & Tanwin",
     "icon": "🔊",
     "desc": "Nun sukun/tanwin bertemu huruf halqi (ء ه ع غ ح خ), dibaca jelas tanpa dengung.",
-    "example": {
-      "ar": "مِنْ هَادٍ",
-      "latin": "min hād"
-    }
+    "examples": [
+      { "ar": "مِنْ هَادٍ", "latin": "min hād" },
+      { "ar": "أَنْعَمْتَ", "latin": "an'amta" },
+      { "ar": "مِنْ غَيْرِ", "latin": "min ghairi" },
+      { "ar": "مِنْ أَجْلِ", "latin": "min ajli" },
+      { "ar": "مِنْ حَيْثُ", "latin": "min haitsu" }
+    ]
   },
   {
     "name": "Ghunnah",
     "cat": "Hukum Mim & Nun",
     "icon": "👃",
     "desc": "Dengung pada huruf م ن yang bertasydid atau ketika ikhfa/idgham bighunnah.",
-    "example": {
-      "ar": "إِنَّ",
-      "latin": "inna"
-    }
+    "examples": [
+      { "ar": "إِنَّ", "latin": "inna" },
+      { "ar": "إِنَّمَا", "latin": "innamā" },
+      { "ar": "ثُمَّ", "latin": "thumma" },
+      { "ar": "مِمَّا", "latin": "mimmā" },
+      { "ar": "فَأَمَّا الْيَتِيمَ", "latin": "fa-ammal-yatīm" }
+    ]
   },
   {
     "name": "Ikhfa Syafawi",
     "cat": "Mim Sukun",
     "icon": "🤐",
     "desc": "Mim sukun bertemu ب, dibaca samar dengan dengung di bibir.",
-    "example": {
-      "ar": "تَرْمِيهِمْ بِحِجَارَةٍ",
-      "latin": "tarmīhim-biḥijārah"
-    }
+    "examples": [
+      { "ar": "تَرْمِيهِمْ بِحِجَارَةٍ", "latin": "tarmīhim-biḥijārah" },
+      { "ar": "هُمْ بِالسَّاهِرَةِ", "latin": "hum bis-sāhirah" },
+      { "ar": "أَنْتُمْ بِمُعْجِزِينَ", "latin": "antum bimu'jizīn" },
+      { "ar": "وَمَا هُمْ بِظَالِمِينَ", "latin": "wa mā hum biẓālimīn" },
+      { "ar": "رَبَّهُمْ بِهِمْ", "latin": "rabbahum bihim" }
+    ]
   },
   {
     "name": "Idgham Mimi",
     "cat": "Mim Sukun",
     "icon": "🎤",
     "desc": "Mim sukun bertemu م, dibaca melebur dengan dengung.",
-    "example": {
-      "ar": "لَهُمْ مُلْكُ",
-      "latin": "lahum-mulku"
-    }
+    "examples": [
+      { "ar": "لَهُمْ مُلْكُ", "latin": "lahum-mulku" },
+      { "ar": "لَهُمْ مَا يَشَاءُونَ", "latin": "lahum mā yasyā'ūn" },
+      { "ar": "وَمِنْهُمْ مَنْ", "latin": "wa minhum man" },
+      { "ar": "إِنْ كُنْتُمْ مُؤْمِنِينَ", "latin": "in kuntum mu'minīn" },
+      { "ar": "إِنَّهُمْ مُحْضَرُونَ", "latin": "innahum muḥḍarūn" }
+    ]
   },
   {
     "name": "Izhar Syafawi",
     "cat": "Mim Sukun",
     "icon": "🗣️",
     "desc": "Mim sukun bertemu selain م ب, dibaca jelas, bibir tertutup rapat.",
-    "example": {
-      "ar": "أَنْعَمْتَ عَلَيْهِمْ غَيْرِ",
-      "latin": "an'amta 'alaihim gairi"
-    }
+    "examples": [
+      { "ar": "أَنْعَمْتَ عَلَيْهِمْ غَيْرِ", "latin": "an'amta 'alaihim gairi" },
+      { "ar": "وَلَا أَنْتُمْ عَابِدُونَ", "latin": "wa lā antum 'ābidūn" },
+      { "ar": "لَهُمْ أَجْرٌ", "latin": "lahum ajrun" },
+      { "ar": "وَهُمْ فِيهَا", "latin": "wa hum fīhā" },
+      { "ar": "عَلَيْهِمْ وَلَا", "latin": "'alaihim wa lā" }
+    ]
   },
   {
     "name": "Mad Thabi'i",
     "cat": "Mad",
     "icon": "〰️",
     "desc": "Panjang bacaan 2 harakat. Bertemu alif setelah fathah, wau sukun setelah dhammah, ya sukun setelah kasrah.",
-    "example": {
-      "ar": "رَبِّ الْعَالَمِينَ",
-      "latin": "rabbil-'ālamīn"
-    }
+    "examples": [
+      { "ar": "رَبِّ الْعَالَمِينَ", "latin": "rabbil-'ālamīn" },
+      { "ar": "بِسْمِ اللَّهِ الرَّحْمَٰنِ", "latin": "bismillāhir-raḥmān" },
+      { "ar": "السَّمَاوَاتِ", "latin": "as-samāwāt" },
+      { "ar": "وَإِيَّاكَ نَسْتَعِينُ", "latin": "wa iyyāka nasta'īn" },
+      { "ar": "أَعْطَيْنَاكَ الْكَوْثَرَ", "latin": "a'ṭainākal-kausar" }
+    ]
   },
   {
     "name": "Mad Wajib Muttasil",
     "cat": "Mad",
     "icon": "🔗",
     "desc": "Mad bertemu hamzah dalam satu kata, dibaca panjang 4-5 harakat.",
-    "example": {
-      "ar": "جَاءَ",
-      "latin": "jā'a"
-    }
+    "examples": [
+      { "ar": "جَاءَ", "latin": "jā'a" },
+      { "ar": "السَّمَاءَ", "latin": "as-samā'a" },
+      { "ar": "السُّفَهَاءِ", "latin": "as-sufahā'i" },
+      { "ar": "دُعَاءَ", "latin": "du'ā'a" },
+      { "ar": "جَاءَكُمْ", "latin": "jā'akum" }
+    ]
   },
   {
     "name": "Mad Jaiz Munfasil",
     "cat": "Mad",
     "icon": "➗",
     "desc": "Mad bertemu hamzah di kata berbeda, boleh panjang 2-5 harakat.",
-    "example": {
-      "ar": "إِنَّا أَعْطَيْنَاكَ",
-      "latin": "innā a'ṭaināka"
-    }
+    "examples": [
+      { "ar": "إِنَّا أَعْطَيْنَاكَ", "latin": "innā a'ṭaināka" },
+      { "ar": "إِنَّا أَنْزَلْنَاهُ", "latin": "innā anzalnāhu" },
+      { "ar": "وَمَا أَدْرَاكَ", "latin": "wa mā adrāka" },
+      { "ar": "بِمَا أَوْحَى", "latin": "bimā auḥā" },
+      { "ar": "يَا أَيُّهَا النَّاسُ", "latin": "yā ayyuhan-nāsu" }
+    ]
   },
   {
     "name": "Mad Arid Lissukun",
     "cat": "Mad",
     "icon": "🌙",
     "desc": "Mad thabi'i bertemu huruf yang dibaca sukun karena waqaf, panjang 2-6 harakat.",
-    "example": {
-      "ar": "الْعَالَمِينَ",
-      "latin": "al-'ālamīn"
-    }
+    "examples": [
+      { "ar": "الْعَالَمِينَ", "latin": "al-'ālamīn" },
+      { "ar": "الرَّحِيمِ", "latin": "ar-raḥīm" },
+      { "ar": "الضَّالِّينَ", "latin": "aḍ-ḍāllīn" },
+      { "ar": "الْمُتَّقِينَ", "latin": "al-muttaqīn" },
+      { "ar": "سَمِيعًا", "latin": "samī'ā (saat berhenti)" }
+    ]
   },
   {
     "name": "Qalqalah",
     "cat": "Huruf Qalqalah",
     "icon": "💥",
     "desc": "Huruf ق ط ب ج د bunyinya memantul. Qalqalah sughra di tengah, kubra saat waqaf.",
-    "example": {
-      "ar": "يَدْخُلُونَ",
-      "latin": "yadkhulūn"
-    }
+    "examples": [
+      { "ar": "يَدْخُلُونَ", "latin": "yadkhulūn" },
+      { "ar": "لَمْ يَلِدْ وَلَمْ يُولَدْ", "latin": "lam yalid wa lam yūlad" },
+      { "ar": "قُلْ هُوَ اللَّهُ أَحَدٌ", "latin": "qul huwallāhu aḥad" },
+      { "ar": "الْحَقُّ", "latin": "al-ḥaqq" },
+      { "ar": "الصِّرَاطَ الْمُسْتَقِيمَ", "latin": "aṣ-ṣirāṭal-mustaqīm" }
+    ]
   }
 ];
 

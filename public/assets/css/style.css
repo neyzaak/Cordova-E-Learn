@@ -549,6 +549,34 @@ img { max-width: 100%; display: block; }
   font-size: 13px; color: var(--emerald-900);
 }
 .rule-example .ex-ar { font-family: var(--font-ar); font-size: 22px; direction: rtl; display: block; margin-bottom: 4px; color: var(--emerald-950); }
+.rule-card { cursor: pointer; }
+.rule-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--gold-300); }
+.rule-card:focus-visible { outline: 2px solid var(--gold-500); outline-offset: 2px; }
+.rule-more { font-size: 11px; font-weight: 800; color: var(--gold-600); letter-spacing: .3px; }
+
+/* pop-up 5 contoh tajwid */
+.tajwid-modal { text-align: left; max-width: 480px; max-height: 86vh; overflow-y: auto; }
+.tjm-head { display: flex; align-items: center; gap: 12px; }
+.tjm-ico { flex: none; font-size: 30px; line-height: 1; }
+.tjm-head-t { min-width: 0; }
+.tjm-head h4 { font-size: 17.5px; font-weight: 800; color: var(--emerald-900); }
+.tjm-head .sub { font-size: 11.5px; font-weight: 800; color: var(--gold-600); text-transform: uppercase; letter-spacing: .8px; }
+.tjm-desc { font-size: 13.5px; color: var(--ink-soft); line-height: 1.6; margin: 12px 0 16px; }
+.tjm-examples { display: flex; flex-direction: column; gap: 10px; }
+.tjm-ex {
+  display: flex; align-items: flex-start; gap: 12px;
+  background: var(--emerald-50); border: 1px solid var(--emerald-100);
+  border-radius: 12px; padding: 12px 14px;
+}
+.tjm-n {
+  flex: none; width: 24px; height: 24px; display: grid; place-items: center;
+  border-radius: 99px; background: linear-gradient(135deg, var(--gold-400), var(--gold-600));
+  color: #3a2a03; font-size: 12px; font-weight: 800; margin-top: 3px;
+}
+.tjm-txt { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.tjm-ar { font-family: var(--font-ar); font-size: 22px; line-height: 1.45; color: var(--emerald-950); direction: rtl; text-align: right; }
+.tjm-lat { font-size: 13px; font-weight: 600; color: var(--gold-600); }
+.tjm-done { width: 100%; margin-top: 18px; }
 
 /* ================= HIJAIYAH ================= */
 .hijaiyah-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(120px, 100%), 1fr)); gap: 14px; }
@@ -1253,6 +1281,7 @@ img { max-width: 100%; display: block; }
 [data-theme="dark"] #password-form input::placeholder { color: var(--ink-soft); }
 [data-theme="dark"] #profile-form input[readonly] { background: #12291e; color: #9fe8c8; }
 [data-theme="dark"] .seg { background: #14261f; border-color: rgba(140, 200, 175, .22); }
+[data-theme="dark"] .tjm-ex { background: #0d2017; border-color: rgba(140, 200, 175, .2); }
 [data-theme="dark"] .switch__track { background: #1d4a3a; }
 
 /* teks hijau tua -> hijau muda di atas kartu gelap */
@@ -1274,7 +1303,9 @@ img { max-width: 100%; display: block; }
 [data-theme="dark"] .leader-head h4,
 [data-theme="dark"] .quiz-question .q-ar,
 [data-theme="dark"] .lr-name,
-[data-theme="dark"] .pp-name { color: #cdeede; }
+[data-theme="dark"] .pp-name,
+[data-theme="dark"] .tjm-head h4,
+[data-theme="dark"] .tjm-ar { color: #cdeede; }
 
 [data-theme="dark"] .takwin-hero { background: linear-gradient(135deg, #0f201a 0%, #241d0a 100%); border-color: rgba(212, 169, 55, .45); }
 [data-theme="dark"] .takwin-hero h4,
