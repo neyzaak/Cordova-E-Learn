@@ -76,9 +76,10 @@
     <p class="auth-status" id="auth-status">Menghubungkan server…</p>
   </div>
 
-  <div class="sidebar__user" id="sidebar-user" hidden>
+  <div class="sidebar__user" id="sidebar-user" hidden title="Klik untuk pengaturan profil & password">
     <span class="su-ico">👤</span>
     <strong id="user-nama"></strong>
+    <button class="user-settings" id="btn-account" title="Pengaturan akun">⚙️</button>
     <button class="user-logout" id="btn-logout" title="Keluar dari akun">Keluar</button>
   </div>
 
@@ -400,6 +401,45 @@
       <p class="auth-msg" id="auth-msg"></p>
       <button type="submit" class="btn btn-gold" id="auth-submit">Masuk</button>
       <button type="button" class="link-btn auth-guest" id="auth-guest">Lewati — main tanpa akun (lokal)</button>
+    </form>
+  </div>
+</div>
+
+<!-- ======= OVERLAY PENGATURAN AKUN (ganti profil & password) ======= -->
+<div class="auth-overlay" id="account-overlay">
+  <div class="auth-card card">
+    <button class="modal-close" id="account-close" aria-label="Tutup">✕</button>
+    <img class="auth-logo" src="assets/img/favicon.png" alt="Logo Cordova E-Learn" />
+    <h3 class="auth-title">Pengaturan Akun</h3>
+    <p class="auth-sub" id="account-session">Masuk sebagai <strong id="account-user"></strong></p>
+    <div class="auth-tabs">
+      <button type="button" class="auth-tab active" id="tab-profile">🧑‍🏫 Profil</button>
+      <button type="button" class="auth-tab" id="tab-password">🔑 Password</button>
+    </div>
+
+    <form id="profile-form" novalidate>
+      <label for="profile-username">Username
+        <input id="profile-username" readonly disabled spellcheck="false" />
+      </label>
+      <label for="profile-nama">Nama Lengkap
+        <input id="profile-nama" placeholder="cth: Budi Santoso" autocomplete="name" maxlength="40" required />
+      </label>
+      <p class="auth-msg" id="profile-msg"></p>
+      <button type="submit" class="btn btn-gold" id="profile-submit">Simpan Profil</button>
+    </form>
+
+    <form id="password-form" novalidate hidden>
+      <label for="pw-old">Password Lama
+        <input id="pw-old" type="password" autocomplete="current-password" required />
+      </label>
+      <label for="pw-new">Password Baru
+        <input id="pw-new" type="password" placeholder="Minimal 4 karakter" autocomplete="new-password" required />
+      </label>
+      <label for="pw-confirm">Ulangi Password Baru
+        <input id="pw-confirm" type="password" autocomplete="new-password" required />
+      </label>
+      <p class="auth-msg" id="pw-msg"></p>
+      <button type="submit" class="btn btn-gold" id="pw-submit">Ganti Password</button>
     </form>
   </div>
 </div>

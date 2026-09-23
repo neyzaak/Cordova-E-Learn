@@ -721,12 +721,23 @@ img { max-width: 100%; display: block; }
   background: rgba(255,255,255,.08);
   border: 1px solid rgba(255,255,255,.12);
   border-radius: 12px; padding: 10px 12px;
+  cursor: pointer;
+  transition: background .2s ease;
 }
+.sidebar__user:hover { background: rgba(255,255,255,.15); }
 .sidebar__user .su-ico { font-size: 17px; }
 .sidebar__user strong {
   flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   font-size: 13px; color: #eafff3;
 }
+.user-settings {
+  font-size: 12px; line-height: 1; flex: none;
+  color: var(--gold-300);
+  background: rgba(212,169,55,.16); border: 1px solid rgba(212,169,55,.4);
+  padding: 6px 7px; border-radius: 99px;
+  transition: background .2s ease;
+}
+.user-settings:hover { background: rgba(212,169,55,.34); }
 .user-logout {
   font-size: 11px; font-weight: 800; color: #fecdd3;
   background: rgba(225,29,72,.18); border: 1px solid rgba(225,29,72,.35);
@@ -750,7 +761,17 @@ img { max-width: 100%; display: block; }
   padding: 28px 26px;
   text-align: center;
   box-shadow: var(--shadow-lg);
+  position: relative;
 }
+.modal-close {
+  position: absolute; top: 12px; right: 12px;
+  width: 34px; height: 34px; border-radius: 99px;
+  background: rgba(6,78,59,.08); border: none;
+  color: var(--ink-soft); font-size: 14px; font-weight: 800;
+  cursor: pointer;
+  transition: background .2s ease;
+}
+.modal-close:hover { background: rgba(6,78,59,.16); }
 .auth-logo {
   width: 62px; height: 62px; margin: 0 auto 10px;
   display: block; object-fit: contain;
@@ -785,6 +806,21 @@ img { max-width: 100%; display: block; }
 .auth-msg { font-size: 12.5px; color: var(--danger); margin: 10px 0 0; min-height: 18px; }
 #auth-form .btn { width: 100%; margin-top: 6px; }
 .auth-guest { margin-top: 12px; display: block; width: 100%; text-align: center; }
+
+/* form pengaturan akun (profil & ganti password) */
+#profile-form, #password-form { text-align: left; }
+#profile-form label, #password-form label {
+  display: block; font-size: 12px; font-weight: 800; color: var(--ink-soft);
+  margin-top: 10px;
+}
+#profile-form input, #password-form input {
+  width: 100%; margin-top: 4px; padding: 11px 14px;
+  border: 1.5px solid rgba(6,78,59,.15); border-radius: 12px;
+  font-size: 16px; background: #fff;
+}
+#profile-form input:focus, #password-form input:focus { outline: 2px solid var(--emerald-500); outline-offset: 1px; }
+#profile-form input[readonly] { background: #f1f6f3; color: var(--ink-soft); }
+#profile-form .btn, #password-form .btn { width: 100%; margin-top: 6px; }
 
 /* ================= KLASEMEN ================= */
 .btn.sm { padding: 8px 14px; font-size: 12.5px; border-radius: 99px; }
@@ -1130,9 +1166,14 @@ img { max-width: 100%; display: block; }
 
 /* input, pencarian, segmen, switch */
 [data-theme="dark"] .toolbar input,
-[data-theme="dark"] #auth-form input { background: #0e1d18; border-color: rgba(140, 200, 175, .25); }
+[data-theme="dark"] #auth-form input,
+[data-theme="dark"] #profile-form input,
+[data-theme="dark"] #password-form input { background: #0e1d18; border-color: rgba(140, 200, 175, .25); }
 [data-theme="dark"] .toolbar input::placeholder,
-[data-theme="dark"] #auth-form input::placeholder { color: var(--ink-soft); }
+[data-theme="dark"] #auth-form input::placeholder,
+[data-theme="dark"] #profile-form input::placeholder,
+[data-theme="dark"] #password-form input::placeholder { color: var(--ink-soft); }
+[data-theme="dark"] #profile-form input[readonly] { background: #12291e; color: #9fe8c8; }
 [data-theme="dark"] .seg { background: #14261f; border-color: rgba(140, 200, 175, .22); }
 [data-theme="dark"] .switch__track { background: #1d4a3a; }
 

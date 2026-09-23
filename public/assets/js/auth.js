@@ -197,6 +197,27 @@
       return data.user;
     },
 
+    /** perbarui nama lengkap (perlu masuk akun) */
+    updateProfile: async function (newNama) {
+      const data = await api("/api/update-profile", {
+        method: "POST",
+        body: JSON.stringify({ nama: newNama })
+      });
+      nama = data.user.nama;
+      localStorage.setItem("aft-nama", nama || "");
+      updateUi();
+      return data.user;
+    },
+
+    /** ganti password (perlu masuk akun; password lama harus benar) */
+    changePassword: async function (oldPassword, newPassword) {
+      const data = await api("/api/change-password", {
+        method: "POST",
+        body: JSON.stringify({ oldPassword, newPassword })
+      });
+      return data;
+    },
+
     logout: function () {
       token = "";
       username = "";
@@ -316,11 +337,131 @@
     });
 
     if (logoutBtn) {
-      logoutBtn.addEventListener("click", () => {
+      logoutBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        closeAccount();
         window.Auth.logout();
         window.toast && window.toast("Kamu sudah keluar dari akun.");
       });
     }
     if (guestBtn) guestBtn.addEventListener("click", () => window.Auth.guest());
+
+    /* ---------- pengaturan akun (profil & password) ---------- */
+    const accountOverlay = document.getElementById("account-overlay");
+    const sidebarUser = document.getElementById("sidebar-user");
+    const accountClose = document.getElementById("account-close");
+
+    function setAccountTab(tab) {
+      const isProfile = tab === "profile";
+      document.getElementById("tab-profile").classList.toggle("active", isProfile);
+      document.getElementById("tab-password").classList.toggle("active", !isProfile);
+      const pf = document.getElementById("profile-form");
+      const pw = document.getElementById("password-form");
+      if (pf) pf.hidden = !isProfile;
+      if (pw) pw.hidden = isProfile;
+      ["profile-msg", "pw-msg"].forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = "";
+      });
+    }
+
+    function openAccount() {
+      if (!accountOverlay) return;
+      const uname = document.getElementById("account-user");
+      if (uname) {
+        uname.textContent = window.Auth.getUsername() + " (" + (window.Auth.getNama() || window.Auth.getUsername()) + ")";
+      }
+      const un = document.getElementById("profile-username");
+      const nm = document.getElementById("profile-nama");
+      if (un) un.value = window.Auth.getUsername();
+      if (nm) nm.value = window.Auth.getNama() || window.Auth.getUsername();
+      ["pw-old", "pw-new", "pw-confirm"].forEach((id) => {
+        const el = document.getElementById(id);
+        if (el) el.value = "";
+      });
+      setAccountTab("profile");
+      accountOverlay.classList.add("show");
+    }
+
+    function closeAccount() {
+      if (accountOverlay) accountOverlay.classList.remove("show");
+    }
+
+    document.getElementById("tab-profile").addEventListener("click", () => setAccountTab("profile"));
+    document.getElementById("tab-password").addEventListener("click", () => setAccountTab("password"));
+    if (accountClose) accountClose.addEventListener("click", closeAccount);
+    if (accountOverlay) {
+      accountOverlay.addEventListener("click", (e) => {
+        if (e.target === accountOverlay) closeAccount();
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && accountOverlay.classList.contains("show")) closeAccount();
+      });
+    }
+    if (sidebarUser) {
+      sidebarUser.addEventListener("click", (e) => {
+        if (e.target.closest("#btn-logout")) return;
+        openAccount();
+      });
+    }
+
+    const profileForm = document.getElementById("profile-form");
+    const passwordForm = document.getElementById("password-form");
+    if (profileForm) {
+      profileForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const msg = document.getElementById("profile-msg");
+        const submit = document.getElementById("profile-submit");
+        const namaInput = document.getElementById("profile-nama");
+        const val = (namaInput.value || "").trim();
+        if (!val) {
+          msg.textContent = "⚠️ Nama tidak boleh kosong.";
+          return;
+        }
+        submit.disabled = true;
+        submit.textContent = "Menyimpan…";
+        try {
+          await window.Auth.updateProfile(val);
+          msg.style.color = "";
+          msg.textContent = "";
+          window.toast && window.toast("✅ Profil berhasil diperbarui.");
+          openAccount(); // segarkan isi form dengan nama terbaru
+          document.getElementById("user-nama") && (document.getElementById("user-nama").textContent = val);
+        } catch (err) {
+          msg.textContent = "⚠️ " + err.message;
+        } finally {
+          submit.disabled = false;
+          submit.textContent = "Simpan Profil";
+        }
+      });
+    }
+
+    if (passwordForm) {
+      passwordForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const msg = document.getElementById("pw-msg");
+        const submit = document.getElementById("pw-submit");
+        const oldPw = document.getElementById("pw-old").value;
+        const newPw = document.getElementById("pw-new").value;
+        const confirmPw = document.getElementById("pw-confirm").value;
+        if (newPw !== confirmPw) {
+          msg.textContent = "⚠️ Password baru tidak sama dengan ulangannya.";
+          return;
+        }
+        submit.disabled = true;
+        submit.textContent = "Menyimpan…";
+        try {
+          await window.Auth.changePassword(oldPw, newPw);
+          msg.textContent = "";
+          closeAccount();
+          window.toast && window.toast("🔑 Password berhasil diganti.");
+        } catch (err) {
+          msg.textContent = "⚠️ " + err.message;
+        } finally {
+          submit.disabled = false;
+          submit.textContent = "Ganti Password";
+        }
+      });
+    }
   });
 })();

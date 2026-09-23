@@ -444,6 +444,56 @@ async function handleApi(req, res, pathname) {
     return sendJSON(res, 405, err("Metode tidak didukung."));
   }
 
+  // akun: perbarui nama/profil (perlu token)
+  if (pathname === "/api/update-profile" && req.method === "POST") {
+    const header = req.headers.authorization || "";
+    const token = header.startsWith("Bearer ") ? header.slice(7).trim() : "";
+    const user = findUserByToken(token);
+    if (!user) return sendJSON(res, 401, err("Sesi tidak valid. Silakan masuk kembali."));
+    return readBody(req, async (readErr, body) => {
+      if (readErr) return sendJSON(res, 400, err(readErr.message));
+      let data = {};
+      try {
+        data = body ? JSON.parse(body) : {};
+      } catch {
+        return sendJSON(res, 400, err("Format JSON tidak valid."));
+      }
+      const nama = String(data.nama || "").trim();
+      if (!nama || nama.length > 40) return sendJSON(res, 400, err("Nama wajib diisi (maks. 40 huruf)."));
+      user.nama = nama;
+      await persistUser(user);
+      return sendJSON(res, 200, ok({ user: { username: user.username, nama } }));
+    });
+  }
+
+  // akun: ganti password (perlu token, password lama harus benar)
+  if (pathname === "/api/change-password" && req.method === "POST") {
+    const header = req.headers.authorization || "";
+    const token = header.startsWith("Bearer ") ? header.slice(7).trim() : "";
+    const user = findUserByToken(token);
+    if (!user) return sendJSON(res, 401, err("Sesi tidak valid. Silakan masuk kembali."));
+    return readBody(req, async (readErr, body) => {
+      if (readErr) return sendJSON(res, 400, err(readErr.message));
+      let data = {};
+      try {
+        data = body ? JSON.parse(body) : {};
+      } catch {
+        return sendJSON(res, 400, err("Format JSON tidak valid."));
+      }
+      const oldPw = String(data.oldPassword || "");
+      const newPw = String(data.newPassword || "");
+      if (user.hash !== hashPw(oldPw, user.salt)) {
+        return sendJSON(res, 401, err("Password lama salah."));
+      }
+      if (newPw.length < 4) return sendJSON(res, 400, err("Password baru minimal 4 karakter."));
+      user.salt = crypto.randomBytes(16).toString("hex");
+      user.hash = hashPw(newPw, user.salt);
+      await persistUser(user);
+      console.log(`[auth] ganti password: ${user.username}`);
+      return sendJSON(res, 200, ok({ message: "Password berhasil diganti." }));
+    });
+  }
+
   sendJSON(res, 404, err("Endpoint tidak ditemukan."));
 }
 

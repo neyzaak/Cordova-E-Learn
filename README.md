@@ -76,6 +76,8 @@ Murid cukup **Daftar** sekali (username + password), lalu **Masuk** — progres 
 | `POST /api/login` | Masuk `{username, password}` → `{token}` |
 | `GET /api/progress` | Ambil progres murid (perlu token) |
 | `PUT /api/progress` | Simpan progres `{progress: {points, saved, memorized, bestQuiz, answeredQuiz, totalAnswered, totalCorrect, quizCount, lastActive}}` |
+| `POST /api/update-profile` | Ubah nama lengkap `{nama}` (perlu token) → `{user: {username, nama}}` |
+| `POST /api/change-password` | Ganti password `{oldPassword, newPassword}` (perlu token; oldPassword harus benar) |
 | `GET /api/leaderboard` | Klasemen kelas (urut poin, tanpa perlu login; hanya nama & skor, tanpa data sensitif) |
 | `POST /api/guru/login` | Login guru `{password}` → `{token}` |
 | `GET /api/guru/students` | Laporan semua murid (auth guru): poin, hafalan, skor, akurasi, dsb. |
