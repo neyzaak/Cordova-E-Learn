@@ -574,6 +574,86 @@ img { max-width: 100%; display: block; }
   100% { transform: scale(1); }
 }
 
+/* ================= LATIHAN TAHSIN METODE TAKWIN ================= */
+.takwin-hero {
+  display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
+  padding: 22px 24px; margin-bottom: 22px;
+  background: linear-gradient(135deg, #eefbf3 0%, #fdf6e0 100%);
+  border: 1.5px solid var(--gold-300);
+  box-shadow: var(--shadow-sm);
+}
+.takwin-hero h4 { font-size: 19px; font-weight: 800; color: var(--emerald-900); margin-bottom: 6px; }
+.takwin-hero p { font-size: 13px; color: var(--ink-soft); margin-bottom: 14px; max-width: 540px; }
+.takwin-hero__tag {
+  display: inline-block; font-size: 10px; font-weight: 800; letter-spacing: .5px;
+  text-transform: uppercase; color: var(--gold-700);
+  background: var(--gold-100); border: 1px solid var(--gold-300);
+  padding: 3px 10px; border-radius: 99px; margin-bottom: 8px;
+}
+.takwin-hero__art { font-size: 56px; line-height: 1; margin-left: auto; }
+.takwin-hero__txt { flex: 1; min-width: 240px; }
+
+.takwin-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 14px; }
+.takwin-head__t { flex: 1; min-width: 200px; }
+.takwin-head__t h4 { font-size: 16.5px; font-weight: 800; color: var(--emerald-900); }
+.takwin-head__t p { font-size: 11.5px; color: var(--ink-soft); }
+.takwin-progress {
+  flex: none; width: 150px; height: 8px; border-radius: 99px;
+  background: var(--emerald-50); border: 1px solid var(--emerald-100); overflow: hidden;
+}
+.takwin-progress span {
+  display: block; height: 100%; width: 0%;
+  background: linear-gradient(90deg, var(--gold-400), var(--gold-600));
+  border-radius: 99px; transition: width .4s ease;
+}
+
+.takwin-levels { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(230px, 100%), 1fr)); gap: 14px; margin-bottom: 20px; }
+.takwin-level {
+  text-align: left; padding: 18px; cursor: pointer;
+  border: 1.5px solid var(--emerald-100);
+  transition: transform .2s, box-shadow .2s, border-color .2s;
+}
+.takwin-level:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--gold-300); }
+.takwin-level .tl-top { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+.takwin-level .tl-ico { font-size: 26px; line-height: 1; }
+.takwin-level h5 { font-size: 14px; font-weight: 800; color: var(--emerald-900); }
+.takwin-level .tl-desc { font-size: 12px; color: var(--ink-soft); line-height: 1.5; }
+.takwin-level .tl-status {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  margin-top: 12px; font-size: 11.5px; font-weight: 800; color: var(--gold-600);
+}
+.takwin-level.done { border-color: var(--emerald-400); }
+.takwin-level.done .tl-status { color: var(--emerald-600); }
+.takwin-level.locked { opacity: .55; cursor: not-allowed; filter: grayscale(.5); }
+.takwin-level.locked:hover { transform: none; box-shadow: none; }
+.takwin-level.locked .tl-status { color: var(--ink-soft); }
+.takwin-level:disabled { pointer-events: none; }
+
+.takwin-stage { padding: 22px; margin-bottom: 20px; }
+.takwin-stage__top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+.takwin-stage__top h5 { font-size: 17px; font-weight: 800; color: var(--emerald-900); }
+.takwin-desc { font-size: 13px; color: var(--ink-soft); margin-bottom: 12px; }
+.takwin-tip {
+  background: var(--gold-100); color: var(--gold-800);
+  border: 1px solid var(--gold-300); font-size: 12.5px; line-height: 1.55;
+  padding: 10px 14px; border-radius: 10px; margin-bottom: 18px;
+}
+.takwin-items { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(118px, 100%), 1fr)); gap: 12px; }
+.takwin-item {
+  background: var(--emerald-50); border: 1.5px solid var(--emerald-200);
+  border-radius: 12px; padding: 14px 10px; text-align: center;
+  transition: transform .18s, box-shadow .18s;
+}
+.takwin-item:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+.takwin-item .ti-ar { font-family: var(--font-ar); font-size: 27px; color: var(--emerald-900); line-height: 1.35; }
+.takwin-item .ti-lat { font-size: 12.5px; font-weight: 700; color: var(--gold-600); margin-top: 5px; }
+.takwin-item .ti-note { font-size: 11px; color: var(--ink-soft); margin-top: 4px; line-height: 1.4; }
+.takwin-stage__go {
+  display: flex; gap: 10px; flex-wrap: wrap; align-items: center; justify-content: center;
+  margin-top: 20px;
+}
+.takwin-stage__go .btn:disabled { opacity: .45; cursor: not-allowed; }
+
 /* ================= DOA ================= */
 .doa-card { padding: 22px; display: flex; flex-direction: column; gap: 10px; transition: translateY .2s, box-shadow .2s; }
 .doa-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(320px, 100%), 1fr)); gap: 16px; }
@@ -1204,6 +1284,19 @@ img { max-width: 100%; display: block; }
 [data-theme="dark"] .quiz-question .q-ar,
 [data-theme="dark"] .lr-name,
 [data-theme="dark"] .pp-name { color: #cdeede; }
+
+[data-theme="dark"] .takwin-hero { background: linear-gradient(135deg, #0f201a 0%, #241d0a 100%); border-color: rgba(212, 169, 55, .45); }
+[data-theme="dark"] .takwin-hero h4,
+[data-theme="dark"] .takwin-head__t h4,
+[data-theme="dark"] .takwin-stage__top h5,
+[data-theme="dark"] .takwin-level h5 { color: #cdeede; }
+[data-theme="dark"] .takwin-progress { background: #0d2017; border-color: rgba(140, 200, 175, .2); }
+[data-theme="dark"] .takwin-level { border-color: rgba(140, 200, 175, .18); }
+[data-theme="dark"] .takwin-level.done { border-color: #1d4a3a; }
+[data-theme="dark"] .takwin-level.done .tl-status { color: #7ee2b8; }
+[data-theme="dark"] .takwin-item { border-color: rgba(140, 200, 175, .2); }
+[data-theme="dark"] .takwin-item .ti-ar { color: #cdeede; }
+[data-theme="dark"] .takwin-tip { background: #241d0a; border-color: #4a3c16; color: #f0cf6b; }
 
 [data-theme="dark"] .stat strong,
 [data-theme="dark"] .badge,

@@ -10,6 +10,7 @@ Website pembelajaran Al-Qur'an interaktif dengan UI modern dan menarik, dirancan
 | 🎯 **Mode Hafalan** | Toggle untuk menyembunyikan arti & latin, lalu tandai surah saat sudah hafal (dapat +5 poin). |
 | ✨ **Belajar Tajwid** | 14 aturan tajwid dengan contoh bacaan lengkap. |
 | 🔤 **Hijaiyah** | 29 huruf Arab dengan cara baca. |
+| 📖 **Latihan Tahsin (Takwin)** | Belajar membaca Al-Qur'an bertahap ala Iqro' dalam 8 tingkat: huruf+fathah, kasrah/dhammah, tanwin, sukun, mad, tasydid & qalqalah, kata, sampai membaca ayat. +15 poin per tingkat, bonus +30 saat menuntaskan semua. Progres tersimpan per akun. |
 | 🤲 **Doa Harian** | 10 doa pendek sehari-hari: sebelum makan, tidur, belajar, masuk masjid, untuk orang tua, dll. |
 | 🧠 **Kuis Seru** | 10 soal pilihan ganda dari bank **2.000+ soal** (dibangkitkan otomatis dari 571 ayat + tajwid + hijaiyah + doa), lengkap dengan pembahasan dan skor (maks 100 poin). |
 | 📈 **Kesulitan Bertahap** | Tingkat kesulitan **naik perlahan** sesuai frekuensi latihan: Pemula → Lancar → Mahir → Juara. Soal kuis terakhir tidak langsung diulang. |
@@ -75,7 +76,7 @@ Murid cukup **Daftar** sekali (username + password), lalu **Masuk** — progres 
 | `POST /api/register` | Daftar `{username, nama, password}` → `{token}` |
 | `POST /api/login` | Masuk `{username, password}` → `{token}` |
 | `GET /api/progress` | Ambil progres murid (perlu token) |
-| `PUT /api/progress` | Simpan progres `{progress: {points, saved, memorized, bestQuiz, answeredQuiz, totalAnswered, totalCorrect, quizCount, lastActive}}` |
+| `PUT /api/progress` | Simpan progres `{progress: {points, saved, memorized, bestQuiz, answeredQuiz, totalAnswered, totalCorrect, quizCount, lastActive, takwin: {done: []}, login}}` |
 | `POST /api/update-profile` | Ubah nama lengkap `{nama}` (perlu token) → `{user: {username, nama}}` |
 | `POST /api/change-password` | Ganti password `{oldPassword, newPassword}` (perlu token; oldPassword harus benar) |
 | `GET /api/leaderboard` | Klasemen kelas (urut poin, tanpa perlu login; hanya nama & skor, tanpa data sensitif) |

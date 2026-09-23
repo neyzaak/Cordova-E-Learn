@@ -221,6 +221,7 @@ const DEFAULTS = () => ({
   totalCorrect: 0,
   quizCount: 0,
   lastActive: null,
+  takwin: { done: [] }, // tingkat Latihan Tahsin (Metode Takwin) yang selesai
   login: { day: "", streak: 0, best: 0, month: "", days: [] }
 });
 
@@ -238,6 +239,14 @@ function sanitizeLogin(src) {
     level: Number.isInteger(s.level) && s.level >= 0 && s.level <= 2 ? s.level : 0,
     levelDays: clamp(s.levelDays, 100000),
     levelCycles: clamp(s.levelCycles, 10000)
+  };
+}
+
+function sanitizeTakwin(src) {
+  const s = src || {};
+  const arr = Array.isArray(s.done) ? s.done : [];
+  return {
+    done: [...new Set(arr.map(Number).filter((n) => Number.isInteger(n) && n >= 1 && n <= 8))].slice(0, 8)
   };
 }
 
@@ -262,6 +271,7 @@ function sanitizeProgress(src) {
     totalCorrect: clamp(p.totalCorrect, 10000000),
     quizCount: clamp(p.quizCount, 1000000),
     lastActive,
+    takwin: sanitizeTakwin(p.takwin),
     login: sanitizeLogin(p.login)
   };
 }

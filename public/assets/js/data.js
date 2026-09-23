@@ -3538,6 +3538,151 @@ const HIJAIYAH = [
   }
 ];
 
+/* ---------------- LATIHAN TAHSIN METODE TAKWIN ---------------- */
+/* Belajar membaca Al-Qur'an bertahap ala Iqro':
+   8 tingkat dari huruf, harakat, sampai membaca ayat. */
+const TAKWIN = [
+  {
+    id: 1,
+    title: "Huruf & Fathah",
+    icon: "🅰️",
+    desc: "Kenali huruf hijaiyah dengan bunyi 'a' (fathah).",
+    tip: "Fathah ( َ ) adalah garis miring kecil di atas huruf yang berbunyi 'a'. Contoh: بَ dibaca \"ba\".",
+    items: [
+      ["اَ","a"],["بَ","ba"],["تَ","ta"],["ثَ","tsa"],["جَ","ja"],["حَ","ha"],["خَ","kha"],
+      ["دَ","da"],["ذَ","dza"],["رَ","ra"],["زَ","za"],["سَ","sa"],["شَ","sya"],["صَ","sha"],
+      ["ضَ","dha"],["طَ","tha"],["ظَ","zha"],["عَ","'a"],["غَ","gha"],["فَ","fa"],["قَ","qa"],
+      ["كَ","ka"],["لَ","la"],["مَ","ma"],["نَ","na"],["وَ","wa"],["هَ","ha"],["ءَ","a"],["يَ","ya"]
+    ]
+  },
+  {
+    id: 2,
+    title: "Kasrah & Dhammah",
+    icon: "🔤",
+    desc: "Huruf berbunyi 'i' (kasrah) dan 'u' (dhammah).",
+    tip: "Kasrah ( ِ ) di bawah huruf = 'i'. Dhammah ( ُ ) di atas huruf = 'u'. Contoh: بِ = \"bi\", بُ = \"bu\".",
+    items: [
+      ["بِ","bi"],["تِ","ti"],["ثِ","tsi"],["جِ","ji"],["حِ","hi"],["خِ","khi"],["دِ","di"],
+      ["ذِ","dzi"],["رِ","ri"],["زِ","zi"],["سِ","si"],["شِ","syi"],["صِ","shi"],["ضِ","dhi"],
+      ["طِ","thi"],["ظِ","zhi"],["عِ","'i"],["غِ","ghi"],["فِ","fi"],["قِ","qi"],["كِ","ki"],
+      ["لِ","li"],["مِ","mi"],["نِ","ni"],["هِ","hi"],["يِ","yi"],
+      ["بُ","bu"],["تُ","tu"],["ثُ","tsu"],["جُ","ju"],["حُ","hu"],["خُ","khu"],["دُ","du"],
+      ["ذُ","dzu"],["رُ","ru"],["زُ","zu"],["سُ","su"],["شُ","syu"],["صُ","shu"],["ضُ","dhu"],
+      ["طُ","thu"],["ظُ","zhu"],["غُ","ghu"],["فُ","fu"],["قُ","qu"],["كُ","ku"],["لُ","lu"],
+      ["مُ","mu"],["نُ","nu"],["هُ","hu"],["يُ","yu"]
+    ]
+  },
+  {
+    id: 3,
+    title: "Tanwin (An/In/Un)",
+    icon: "🎵",
+    desc: "Bunyi 'an', 'in', dan 'un' dengan harakat ganda (tanwin).",
+    tip: "Tanwin ditulis harakat ganda: ً = 'an', ٍ = 'in', ٌ = 'un'. Contoh: بً = \"ban\", بٍ = \"bin\", بٌ = \"bun\".",
+    items: [
+      ["بً","ban"],["تً","tan"],["ثً","tsan"],["جً","jan"],["حً","han"],["خً","khan"],["دً","dan"],
+      ["رً","ran"],["زً","zan"],["سً","san"],["شً","syan"],["صً","shan"],["ضً","dhan"],["طً","than"],
+      ["عً","'an"],["غً","ghan"],["فً","fan"],["قً","qan"],["كً","kan"],["لً","lan"],["مً","man"],
+      ["نً","nan"],["كِتَابًا","kitaaban"],["بَيْتًا","baytan"],
+      ["بٍ","bin"],["تٍ","tin"],["جٍ","jin"],["سٍ","sin"],["مٍ","min"],["نٍ","nin"],
+      ["بٌ","bun"],["تٌ","tun"],["جٌ","jun"],["سٌ","sun"],["لٌ","lun"],["مٌ","mun"],["نٌ","nun"],
+      ["قَلَمٌ","qalamun"],["كِتَابٌ","kitaabun"]
+    ]
+  },
+  {
+    id: 4,
+    title: "Sukun (Huruf Mati)",
+    icon: "⏸️",
+    desc: "Suku kata berhenti dengan huruf mati (sukun).",
+    tip: "Sukun ( ْ ) membuat huruf mati/berhenti tanpa bunyi vokal. Contoh: اَبْ dibaca \"ab\" (b mati).",
+    items: [
+      ["اَبْ","ab"],["اَتْ","at"],["اَدْ","ad"],["اِرْ","ir"],["اُتْ","ut"],["اُمْ","um"],
+      ["بَتْ","bat"],["تَبْ","tab"],["جِدْ","jid"],["خَلْ","khal"],["دُخْ","dukh"],["رَبْ","rab"],
+      ["سَمْ","sam"],["فَرْ","far"],["قُمْ","qum"],["قُلْ","qul"],["كَنْ","kan"],["لَمْ","lam"],
+      ["مَنْ","man"],["نَكْ","nak"],["هَلْ","hal"]
+    ]
+  },
+  {
+    id: 5,
+    title: "Mad Panjang",
+    icon: "➰",
+    desc: "Bacaan panjang dua harakat (mad thabi'i).",
+    tip: "Mad thabi'i dibaca panjang ±2 harakat. Contoh: بَا = \"baa\", بِيْ = \"bii\", بُوْ = \"buu\".",
+    items: [
+      ["بَا","baa"],["تَا","taa"],["جَا","jaa"],["حَا","haa"],["دَا","daa"],["رَا","raa"],
+      ["سَا","saa"],["عَا","'aa"],["فَا","faa"],["قَا","qaa"],["كَا","kaa"],["لَا","laa"],
+      ["مَا","maa"],["نَا","naa"],["بِيْ","bii"],["تِيْ","tii"],["لِيْ","lii"],["فِيْ","fii"],
+      ["سِيْ","sii"],["نِيْ","nii"],["بُوْ","buu"],["تُوْ","tuu"],["سُوْ","suu"],["كُوْ","kuu"],
+      ["لُوْ","luu"],["نُوْ","nuu"],["قَالَ","qaala"],["تَابَ","taaba"]
+    ]
+  },
+  {
+    id: 6,
+    title: "Tasydid & Qalqalah",
+    icon: "🎯",
+    desc: "Huruf ganda (tasydid) dan huruf memantul (qalqalah: ق ط ب ج د).",
+    tip: "Tasydid ( ّ ) menjadikan huruf ganda: بَّ = \"bba\". Qalqalah seperti قَبْ = \"qab\" memantul tegas.",
+    items: [
+      ["بَّ","bba"],["تُّ","ttu"],["دَّ","dda"],["رَّ","rra"],["سَّ","ssa"],["لَّ","lla"],
+      ["مَّ","mma"],["نَّ","nna"],["اَبَّ","abba"],["اِتَّ","itta"],["اُبُّ","ubbu"],
+      ["قَبْ","qab"],["طَبْ","thab"],["بَجْ","baj"],["دَجْ","daj"],["جُدْ","jud"],["قِطْ","qith"],
+      ["اَحَدٌ","ahad"],["قَلْبٌ","qalb"]
+    ]
+  },
+  {
+    id: 7,
+    title: "Latihan Kata",
+    icon: "📚",
+    desc: "Rangkai huruf jadi kata-kata sederhana yang sering ada di Al-Qur'an.",
+    tip: "Baca pelan-pelan lalu ulangi sampai lancar. Arti kata ditulis di bawah untuk membantumu memahaminya.",
+    items: [
+      ["كِتَابٌ","kitaabun","buku"],
+      ["قَلَمٌ","qalamun","pena"],
+      ["بَيْتٌ","baytun","rumah"],
+      ["بَابٌ","baabun","pintu"],
+      ["مَسْجِدٌ","masjidun","masjid"],
+      ["رَسُوْلٌ","rasuulun","rasul / utusan"],
+      ["مُسْلِمٌ","muslimun","orang muslim"],
+      ["عِلْمٌ","'ilmun","ilmu"],
+      ["نُوْرٌ","nuurun","cahaya"],
+      ["صَلَاةٌ","shalaatun","salat"],
+      ["جَنَّةٌ","jannatun","surga"],
+      ["رَحْمَةٌ","rahmatun","rahmat"],
+      ["مَاءٌ","maa'un","air"],
+      ["قُرْاٰنٌ","qur'aanun","Al-Qur'an"]
+    ]
+  }
+];
+
+/* Tingkat 8: membaca potongan ayat surah pendek (Juz 'Amma).
+   Dibangun dari data SURAHS supaya konsisten dengan halaman Baca Surah. */
+(function () {
+  const src = [108, 112, 113, 114, 110, 103];
+  const items = [];
+  for (const id of src) {
+    const s = SURAHS.find((x) => x.id === id);
+    if (!s) continue;
+    for (const ay of s.ayahs) {
+      items.push({
+        ar: ay.a,
+        lat: ay.t
+          .replace(/\s*\([^)]*\)\.?$/, "")
+          .replace(/\[[^\]]*\]/g, "")
+          .replace(/[.,]$/, "")
+          .trim(),
+        note: "Surah " + s.name + " — " + ay.i
+      });
+    }
+  }
+  TAKWIN.push({
+    id: 8,
+    title: "Membaca Ayat",
+    icon: "🌙",
+    desc: "Terapkan semua yang sudah dipelajari dengan membaca potongan ayat Al-Qur'an.",
+    tip: "Baca pelan-pelan dan muraja'ah dengan murottal surah terkait di halaman Baca Surah. Semangat! 💪",
+    items: items
+  });
+})();
+
 /* ---------------- DOA HARIAN ---------------- */
 const DOAS = [
   {

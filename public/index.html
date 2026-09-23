@@ -273,6 +273,45 @@
       <h3>🔤 Mengenal Huruf Hijaiyah</h3>
       <p>Klik huruf mana pun untuk melihat cara membacanya. Ada 29 huruf (termasuk hamzah). 👆</p>
     </div>
+
+    <!-- Kartu pembuka Latihan Tahsin Metode Takwin -->
+    <div class="takwin-hero card" id="takwin-hero">
+      <div class="takwin-hero__txt">
+        <span class="takwin-hero__tag">✨ Fitur Baru</span>
+        <h4>📖 Latihan Tahsin Metode Takwin</h4>
+        <p>Belajar membaca Al-Qur'an bertahap ala Iqro': dari mengenal huruf, harakat, sampai lancar membaca ayat. 8 tingkat latihan + hadiah poin untuk setiap tingkat! 🌟</p>
+        <button class="btn btn-gold" id="btn-takwin-start" type="button">🚀 Mulai Latihan</button>
+      </div>
+      <div class="takwin-hero__art">🌙</div>
+    </div>
+
+    <!-- Area Latihan Tahsin (daftar tingkat + panggung latihan) -->
+    <div id="takwin-view" hidden>
+      <div class="takwin-head">
+        <button class="btn btn-ghost dark sm" id="btn-takwin-back" type="button">← Kembali</button>
+        <div class="takwin-head__t">
+          <h4>📖 Latihan Tahsin Metode Takwin</h4>
+          <p id="takwin-progress-txt">0/8 tingkat selesai</p>
+        </div>
+        <div class="takwin-progress"><span id="takwin-progress"></span></div>
+      </div>
+      <div class="takwin-levels" id="takwin-levels"></div>
+      <div class="takwin-stage card" id="takwin-stage" hidden>
+        <div class="takwin-stage__top">
+          <span class="badge gold" id="takwin-tag"></span>
+          <h5 id="takwin-stage-title"></h5>
+        </div>
+        <p class="takwin-desc" id="takwin-desc"></p>
+        <div class="takwin-tip" id="takwin-tip"></div>
+        <div class="takwin-items" id="takwin-items"></div>
+        <div class="takwin-stage__go">
+          <button class="btn btn-ghost dark sm" id="btn-takwin-prev" type="button">← Tingkat sebelumnya</button>
+          <button class="btn btn-gold" id="btn-takwin-done" type="button">🎯 Selesai &amp; Lanjut</button>
+          <button class="btn btn-ghost dark sm" id="btn-takwin-next" type="button">Tingkat berikutnya →</button>
+        </div>
+      </div>
+    </div>
+
     <div class="hijaiyah-grid" id="hijaiyah-grid"></div>
   </section>
 

@@ -81,6 +81,9 @@
       store.totalCorrect = progress.totalCorrect || 0;
       store.quizCount = progress.quizCount || 0;
       store.lastActive = progress.lastActive || null;
+      store.takwin = {
+        done: Array.isArray(progress.takwin && progress.takwin.done) ? progress.takwin.done : []
+      };
       mergeLogin(store.login, progress.login);
       window.__saveStoreLocal();
       if (typeof window.renderAll === "function") window.renderAll();
@@ -182,7 +185,7 @@
       localStorage.setItem("aft-nama", nama || "");
       hideOverlay();
       updateUi();
-      applyServerProgress({ points: 0, saved: [], memorized: [], bestQuiz: 0, answeredQuiz: 0 }); // akun baru selalu mulai 0, tanpa progres lokal
+      applyServerProgress({ points: 0, saved: [], memorized: [], bestQuiz: 0, answeredQuiz: 0, takwin: { done: [] } }); // akun baru selalu mulai 0, tanpa progres lokal
       return data.user;
     },
 
@@ -263,6 +266,7 @@
                 totalCorrect: store.totalCorrect,
                 quizCount: store.quizCount,
                 lastActive: store.lastActive,
+                takwin: { done: Array.isArray(store.takwin && store.takwin.done) ? store.takwin.done : [] },
                 login: store.login
               }
             })

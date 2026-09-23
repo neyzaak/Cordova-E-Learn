@@ -50,6 +50,7 @@ const defaultStore = {
   totalCorrect: 0,  // jumlah jawaban benar
   quizCount: 0,     // berapa kali kuis diselesaikan
   lastActive: null, // timestamp aktivitas terakhir
+  takwin: { done: [] }, // tingkat Latihan Tahsin (Metode Takwin) yang sudah selesai
   login: {
     day: "", streak: 0, best: 0, month: "", days: [], // kalender bulan berjalan
     level: 0,      // tingkat loyalitas: 0=7 hari, 1=14 hari, 2=30 hari
@@ -84,6 +85,7 @@ window.renderAll = () => {
   renderQuizBest();
   renderLoginMilestone();
   renderLoyaltyPage();
+  renderTakwinPicker();
 };
 window.__afterAuth = () => {};
 
@@ -780,6 +782,192 @@ function renderHijaiyah() {
 }
 
 /* ============================================================
+   LATIHAN TAHSIN METODE TAKWIN
+   ============================================================ */
+const TAKWIN_POIN = 15;         // poin tiap tingkat yang diselesaikan
+const TAKWIN_BONUS = 30;        // bonus menuntaskan seluruh 8 tingkat
+let takwinStageId = null;
+
+function takwinDone() {
+  return Array.isArray(store.takwin && store.takwin.done) ? store.takwin.done : [];
+}
+
+/* tingkat pertama yang belum selesai (kunci tingkatan di depannya) */
+function takwinCur() {
+  const done = takwinDone();
+  for (const lv of TAKWIN) if (!done.includes(lv.id)) return lv.id;
+  return TAKWIN[TAKWIN.length - 1].id;
+}
+
+function takwinSave() {
+  store.takwin = { done: takwinDone() };
+  saveStore();
+}
+
+function renderTakwinPicker() {
+  const wrap = document.getElementById("takwin-levels");
+  if (!wrap) return;
+  const done = takwinDone();
+  const cur = takwinCur();
+  wrap.innerHTML = "";
+  TAKWIN.forEach((lv) => {
+    const isDone = done.includes(lv.id);
+    const unlocked = lv.id <= cur;
+    const el = document.createElement("button");
+    el.className = "takwin-level card" + (isDone ? " done" : "") + (unlocked ? "" : " locked");
+    el.type = "button";
+    el.innerHTML = `
+      <div class="tl-top">
+        <span class="tl-ico">${lv.icon}</span>
+        <h5>Tingkat ${lv.id} — ${lv.title}</h5>
+      </div>
+      <p class="tl-desc">${lv.desc}</p>
+      <div class="tl-status">
+        <span>${unlocked ? (isDone ? "✅ Selesai" : "▶️ Lanjutkan") : "🔒 Terkunci"}</span>
+        <span>${lv.items.length} item</span>
+      </div>`;
+    if (unlocked) el.addEventListener("click", () => openTakwinStage(lv.id));
+    wrap.appendChild(el);
+  });
+  const pct = Math.min(100, Math.round((done.length / TAKWIN.length) * 100));
+  const bar = document.getElementById("takwin-progress");
+  if (bar) bar.style.width = pct + "%";
+  const lbl = document.getElementById("takwin-progress-txt");
+  if (lbl)
+    lbl.textContent =
+      done.length >= TAKWIN.length
+        ? "Semua tingkat selesai! 🏆"
+        : done.length + "/" + TAKWIN.length + " tingkat selesai";
+}
+
+function openTakwinView() {
+  const hero = document.getElementById("takwin-hero");
+  const view = document.getElementById("takwin-view");
+  if (hero) hero.hidden = true;
+  if (view) view.hidden = false;
+  const grid = document.getElementById("hijaiyah-grid");
+  if (grid) grid.hidden = true;
+  showTakwinPicker();
+  renderTakwinPicker();
+  // langsung tampilkan panggung tingkat aktif agar murid langsung latihan
+  const cur = takwinCur();
+  const done = takwinDone();
+  if (done.includes(cur)) showTakwinPicker();
+  else openTakwinStage(cur);
+}
+
+function showTakwinPicker() {
+  const lv = document.getElementById("takwin-levels");
+  const st = document.getElementById("takwin-stage");
+  if (lv) lv.hidden = false;
+  if (st) st.hidden = true;
+  takwinStageId = null;
+}
+
+function openTakwinStage(levelId) {
+  const lv = TAKWIN.find((x) => x.id === levelId);
+  if (!lv) return;
+  takwinStageId = levelId;
+  const levels = document.getElementById("takwin-levels");
+  const stage = document.getElementById("takwin-stage");
+  if (levels) levels.hidden = true;
+  if (stage) stage.hidden = false;
+
+  const tag = document.getElementById("takwin-tag");
+  if (tag) tag.textContent = "Tingkat " + lv.id + "/" + TAKWIN.length;
+  const title = document.getElementById("takwin-stage-title");
+  if (title) title.textContent = lv.icon + " " + lv.title;
+  const desc = document.getElementById("takwin-desc");
+  if (desc) desc.textContent = lv.desc;
+  const tip = document.getElementById("takwin-tip");
+  if (tip) tip.textContent = "💡 " + lv.tip;
+
+  const grid = document.getElementById("takwin-items");
+  grid.innerHTML = "";
+  lv.items.forEach((raw) => {
+    const it = Array.isArray(raw) ? { ar: raw[0], lat: raw[1], note: raw[2] || "" } : raw;
+    const cell = document.createElement("div");
+    cell.className = "takwin-item";
+    cell.innerHTML = `
+      <div class="ti-ar">${it.ar}</div>
+      <div class="ti-lat">${it.lat}</div>
+      ${it.note ? '<div class="ti-note">' + it.note + "</div>" : ""}`;
+    grid.appendChild(cell);
+  });
+
+  const done = takwinDone();
+  const prev = document.getElementById("btn-takwin-prev");
+  const next = document.getElementById("btn-takwin-next");
+  const btnDone = document.getElementById("btn-takwin-done");
+  if (prev) prev.disabled = levelId <= 1;
+  if (next) next.disabled = levelId >= TAKWIN[TAKWIN.length - 1].id || !done.includes(levelId);
+  if (btnDone) {
+    btnDone.textContent = done.includes(levelId) ? "✅ Sudah selesai — Lanjut" : "🎯 Selesai & Lanjut";
+    btnDone.dataset.level = levelId;
+  }
+}
+
+function completeTakwin(levelId) {
+  const done = takwinDone();
+  const isNew = !done.includes(levelId);
+  if (isNew) {
+    done.push(levelId);
+    store.takwin = { done };
+    saveStore();
+    addPoints(TAKWIN_POIN);
+    toast("🏆 Tingkat " + levelId + " selesai! +" + TAKWIN_POIN + " poin", "gold");
+    if (done.length >= TAKWIN.length) {
+      addPoints(TAKWIN_BONUS);
+      toast("🎉 Masya Allah! Kamu menuntaskan Latihan Tahsin Metode Takwin! +" + TAKWIN_BONUS + " poin", "gold");
+    }
+  } else {
+    toast("Tingkat ini sudah diselesaikan. Lanjut terus! 👏", "gold");
+  }
+  renderTakwinPicker();
+  openTakwinStage(takwinCur());
+}
+
+function initTakwin() {
+  const start = document.getElementById("btn-takwin-start");
+  const back = document.getElementById("btn-takwin-back");
+  const done = document.getElementById("btn-takwin-done");
+  const prev = document.getElementById("btn-takwin-prev");
+  const next = document.getElementById("btn-takwin-next");
+  const pickerItems = document.getElementById("takwin-levels");
+  if (start) start.addEventListener("click", openTakwinView);
+  if (back)
+    back.addEventListener("click", () => {
+      if (takwinStageId) {
+        showTakwinPicker();
+        renderTakwinPicker();
+      } else {
+        const view = document.getElementById("takwin-view");
+        const hero = document.getElementById("takwin-hero");
+        const grid = document.getElementById("hijaiyah-grid");
+        if (view) view.hidden = true;
+        if (hero) hero.hidden = false;
+        if (grid) grid.hidden = false;
+      }
+    });
+  if (done)
+    done.addEventListener("click", () => {
+      const id = Number(done.dataset.level || takwinCur());
+      completeTakwin(id);
+    });
+  if (prev)
+    prev.addEventListener("click", () => {
+      const id = takwinStageId || takwinCur();
+      if (id > 1) openTakwinStage(id - 1);
+    });
+  if (next)
+    next.addEventListener("click", () => {
+      const id = takwinStageId || takwinCur();
+      if (id < TAKWIN[TAKWIN.length - 1].id) openTakwinStage(id + 1);
+    });
+  renderTakwinPicker();
+}
+
+/* ============================================================
    DOA
    ============================================================ */
 function renderDoa() {
@@ -1068,6 +1256,7 @@ function init() {
   renderHijaiyah();
   renderDoa();
   renderQuizBest();
+  initTakwin();
 
   // navigation
   document.querySelectorAll("[data-page]").forEach((el) => {
