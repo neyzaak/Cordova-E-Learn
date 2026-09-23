@@ -20,6 +20,9 @@ const path = require("path");
 const crypto = require("crypto");
 
 const ROOT = __dirname;
+// file web dipindah ke public/ biar cocok dengan hosting statis (Vercel, dll.);
+// kalau belum ada public/, tetap layani dari folder proyek (mode offline/LAN lama).
+const STATIC_DIR = fs.existsSync(path.join(ROOT, "public")) ? path.join(ROOT, "public") : ROOT;
 const PORT = Number(process.env.PORT) || 8710;
 const DATA_DIR = path.join(ROOT, "data");
 const USERS_FILE = path.join(DATA_DIR, "users.json");
@@ -431,8 +434,8 @@ function serveStatic(req, res, pathname) {
     return res.end("404 Not Found");
   }
 
-  const filePath = path.join(ROOT, urlPath);
-  if (!filePath.startsWith(ROOT)) {
+  const filePath = path.join(STATIC_DIR, urlPath);
+  if (!filePath.startsWith(STATIC_DIR)) {
     res.writeHead(403);
     return res.end("Forbidden");
   }
@@ -451,23 +454,29 @@ function serveStatic(req, res, pathname) {
 }
 
 /* ---------- server utama ---------- */
-initStorage()
-  .then(() => {
-    http
-      .createServer((req, res) => {
-        const pathname = (req.url || "/").split("?")[0];
-        if (pathname.startsWith("/api/")) {
-          handleApi(req, res, pathname);
-        } else {
-          serveStatic(req, res, pathname);
-        }
-      })
-      .listen(PORT, () => {
-        console.log(`🕌 Cordova E-Learn berjalan di http://localhost:${PORT}`);
-        console.log(`   Akun terdaftar: ${users.length}`);
-      });
-  })
-  .catch((e) => {
+async function startServer() {
+  await initStorage();
+  http
+    .createServer((req, res) => {
+      const pathname = (req.url || "/").split("?")[0];
+      if (pathname.startsWith("/api/")) {
+        handleApi(req, res, pathname);
+      } else {
+        serveStatic(req, res, pathname);
+      }
+    })
+    .listen(PORT, () => {
+      console.log(`🕌 Cordova E-Learn berjalan di http://localhost:${PORT}`);
+      console.log(`   Akun terdaftar: ${users.length}`);
+    });
+}
+
+// Dijalankan langsung (node server.js) ATAU di-require oleh function hosting (Vercel, dll.)
+if (require.main === module) {
+  startServer().catch((e) => {
     console.error("[db] Gagal menghubungkan database:", e);
     process.exit(1);
   });
+}
+
+module.exports = { users, handleApi, serveStatic, initStorage, ok, err, sendJSON, USE_DB };

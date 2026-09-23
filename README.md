@@ -22,7 +22,7 @@ Website pembelajaran Al-Qur'an interaktif dengan UI modern dan menarik, dirancan
 ## 🚀 Cara Menjalankan
 
 **Cara 1 — Langsung buka**
-Buka file `index.html` di browser (klik dua kali). Semua fitur berjalan offline, kecuali pemutar murottal.
+Buka file `public/index.html` di browser (klik dua kali). Semua fitur berjalan offline, kecuali pemutar murottal.
 
 **Cara 2 — Server lokal (disarankan)**
 ```bash
@@ -42,16 +42,21 @@ DATABASE_URL=postgresql://...node server.js
 - Kalau `DATABASE_URL` **tidak diisi** → server memakai file `data/users.json` seperti biasa (tanpa perlu `npm install`).
 - Kalau diisi → akun & progres tersimpan di PostgreSQL (awet), dan jika DB masih kosong server otomatis
   mengimpor akun lama dari `data/users.json` sekali.
-- Contoh deploy gratis **tanpa kartu kredit**: **Koyeb** (web service dari repo GitHub, build via
-  `Dockerfile`, start otomatis `node server.js`) + **Neon** (PostgreSQL gratis) — isi variabel
-  `DATABASE_URL` dan `GURU_PASSWORD` di dashboard Koyeb. Cadangan: Render (terkadang minta kartu kredit saat verifikasi akun).
+- Contoh deploy gratis **tanpa kartu kredit**:
+  - **Vercel** (paling cepat): frontend di-hosting dari folder `public/`, API `/api/*`
+    jadi serverless function (file `api/[...slug].js`) — isi env `DATABASE_URL` dan
+    `GURU_PASSWORD` sekali (`vercel env add`), lalu `vercel deploy --prod`.
+  - **Koyeb** (web service Node klasik dari repo GitHub, build via `Dockerfile`, start
+    otomatis `node server.js`) + **Neon** (PostgreSQL gratis) — isi variabel
+    `DATABASE_URL` dan `GURU_PASSWORD` di dashboard Koyeb.
+  - Cadangan: Render (terkadang minta kartu kredit saat verifikasi akun).
 
 **Agar setiap murid punya data sendiri:** semua perangkat (HP/komputer) di Wi-Fi atau jaringan yang sama
 bisa membuka server dari laptop guru: `http://IP-laptop:8710` (contoh: `http://15.22.33.128:8710`).
 Murid cukup **Daftar** sekali (username + password), lalu **Masuk** — progres tersimpan otomatis di
 `data/users.json` di server. Ganti PC / HP / browser mana pun, data tetap ikut akunnya.
 
-> 💡 Buka `index.html` langsung tanpa server = **mode lokal**: data hanya tersimpan di perangkat itu.
+> 💡 Buka `public/index.html` langsung tanpa server = **mode lokal**: data hanya tersimpan di perangkat itu.
 
 ## 🔐 Akun Murid (login/daftar)
 
@@ -87,20 +92,22 @@ Buka `http://IP-laptop:8710/guru.html` di browser Anda (laptop guru). Halaman in
 ## 📁 Struktur
 
 ```
-├── index.html              # Halaman utama (single page app)
-├── guru.html               # Laporan progres murid (khusus guru)
-├── assets/
-│   ├── css/style.css       # Desain & animasi
-│   └── js/
-│       ├── data.js         # Konten: surah, tajwid, hijaiyah, doa, bank soal (2159)
-│       ├── auth.js         # Akun murid & sinkronisasi ke server
-│       ├── guru.js         # Logika halaman laporan guru
-│       └── app.js          # Logika aplikasi
-├── data/users.json         # Data murid (dibuat otomatis oleh server)
+├── public/                  # Seluruh halaman & asset situs (di-host Vercel / layanan statis)
+│   ├── index.html           # Halaman utama (single page app)
+│   ├── guru.html            # Laporan progres murid (khusus guru)
+│   └── assets/
+│       ├── css/style.css    # Desain & animasi
+│       └── js/
+│           ├── data.js      # Konten: surah, tajwid, hijaiyah, doa, bank soal (2159)
+│           ├── auth.js      # Akun murid & sinkronisasi ke server
+│           ├── guru.js      # Logika halaman laporan guru
+│           └── app.js       # Logika aplikasi
+├── api/[...slug].js         # Vercel Function: semua /api/* → handler server.js
+├── data/users.json          # Data murid (dibuat otomatis oleh server, mode file)
 ├── tools/
-│   ├── build-data.js       # Generator data surah (dari equran.id API)
-│   └── build-quiz.js       # Generator bank soal 2000+ (dari konten data.js)
-└── server.js               # Server statis + API akun murid & guru (port 8710)
+│   ├── build-data.js        # Generator data surah (dari equran.id API)
+│   └── build-quiz.js        # Generator bank soal 2000+ (dari konten data.js)
+└── server.js                # Server statis + API akun murid & guru (port 8710)
 ```
 
 ## 🛠 Teknologi
