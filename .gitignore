@@ -7,3 +7,6 @@ data/users.json.tmp
 .neon
 .env.local
 .vercel/
+
+.vercel
+.env*
