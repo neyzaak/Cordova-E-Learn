@@ -830,8 +830,6 @@ function renderTakwinPicker() {
     wrap.appendChild(el);
   });
   const pct = Math.min(100, Math.round((done.length / TAKWIN.length) * 100));
-  const bar = document.getElementById("takwin-progress");
-  if (bar) bar.style.width = pct + "%";
   const lbl = document.getElementById("takwin-progress-txt");
   if (lbl)
     lbl.textContent =
