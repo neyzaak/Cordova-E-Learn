@@ -80,7 +80,10 @@ Murid cukup **Daftar** sekali (username + password), lalu **Masuk** — progres 
 | `POST /api/change-password` | Ganti password `{oldPassword, newPassword}` (perlu token; oldPassword harus benar) |
 | `GET /api/leaderboard` | Klasemen kelas (urut poin, tanpa perlu login; hanya nama & skor, tanpa data sensitif) |
 | `POST /api/guru/login` | Login guru `{password}` → `{token}` |
+
 | `GET /api/guru/students` | Laporan semua murid (auth guru): poin, hafalan, skor, akurasi, dsb. |
+
+| `POST /api/guru/delete-student` | Hapus akun murid `{username}` (auth guru) — untuk membersihkan akun percobaan simulasi. Permanen! |
 
 - Password di-hash (scrypt) — tidak pernah disimpan dalam bentuk asli.
 - Token sesi per perangkat; keluar dari satu perangkat tidak memengaruhi yang lain (perlu login ulang di sana).

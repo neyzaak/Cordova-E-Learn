@@ -365,6 +365,44 @@ async function handleApi(req, res, pathname) {
     return sendJSON(res, 200, ok({ students }));
   }
 
+  // guru: hapus akun murid (untuk membersihkan akun percobaan saat simulasi)
+  if (pathname === "/api/guru/delete-student" && req.method === "POST") {
+    const header = req.headers.authorization || "";
+    const token = header.startsWith("Bearer ") ? header.slice(7).trim() : "";
+    if (!(await guruCheck(token))) {
+      return sendJSON(res, 401, err("Sesi guru tidak valid. Login dulu."));
+    }
+    return readBody(req, async (readErr, body) => {
+      if (readErr) return sendJSON(res, 400, err(readErr.message));
+      let data = {};
+      try {
+        data = body ? JSON.parse(body) : {};
+      } catch {
+        return sendJSON(res, 400, err("Format JSON tidak valid."));
+      }
+      const username = String(data.username || "").trim().toLowerCase();
+      if (!/^[a-z0-9_.]{3,20}$/.test(username)) {
+        return sendJSON(res, 400, err("Username tidak valid."));
+      }
+      const idx = users.findIndex((u) => u.username === username);
+      if (idx < 0) return sendJSON(res, 404, err("Akun tidak ditemukan."));
+      const [removed] = users.splice(idx, 1);
+      try {
+        if (USE_DB) {
+          await pgPool.query(`DELETE FROM users WHERE username = $1`, [username]);
+        } else {
+          saveUsers();
+        }
+      } catch (e) {
+        console.error("[db] gagal hapus", username, ":", e.message);
+        users.push(removed); // kembalikan ke memori jika penyimpanan gagal
+        return sendJSON(res, 500, err("Gagal menghapus dari penyimpanan."));
+      }
+      console.log("[guru] hapus akun:", username);
+      return sendJSON(res, 200, ok({ deleted: username }));
+    });
+  }
+
   const post = (pathname === "/api/register" || pathname === "/api/login") && req.method === "POST";
   if (post) {
     return readBody(req, async (readErr, body) => {

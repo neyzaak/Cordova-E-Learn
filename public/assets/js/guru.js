@@ -164,7 +164,10 @@ function renderTable() {
         <td>${s.totalAnswered || 0}</td>
         <td>${s.quizCount || 0}</td>
         <td>${timeAgo(s.lastActive)}</td>
-        <td><button class="row-btn" data-row="${i}">${namaHafal ? "Detail" : "Detail"}</button></td>
+        <td>
+          <button class="row-btn" data-row="${i}">Detail</button>
+          <button class="row-danger" data-del="${esc(s.username)}" title="Hapus akun percobaan ini">Hapus</button>
+        </td>
       </tr>
       <tr class="row-detail" id="rd-${i}">
         <td></td>
@@ -189,7 +192,92 @@ function renderTable() {
       btn.textContent = tr.classList.contains("show") ? "Tutup" : "Detail";
     });
   });
+
+  tbody.querySelectorAll(".row-danger").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      const username = btn.dataset.del;
+      const st = students.find((x) => x.username === username);
+      const label = st && st.nama && st.nama !== username ? ` (${st.nama})` : "";
+      const ok = confirm(
+        `Hapus akun percobaan @${username}${label}?\n\nSeluruh progres & akunnya akan hilang permanen dan tidak bisa dikembalikan.`
+      );
+      if (!ok) return;
+      btn.disabled = true;
+      btn.textContent = "…";
+      try {
+        await api("/api/guru/delete-student", {
+          method: "POST",
+          body: JSON.stringify({ username })
+        });
+        showToast(`🗑️ Akun @${username} dihapus.`);
+        students = students.filter((x) => x.username !== username);
+        renderStats();
+        renderTable();
+      } catch (e) {
+        btn.disabled = false;
+        btn.textContent = "Hapus";
+        alert("Gagal menghapus: " + e.message);
+      }
+    });
+  });
+
   $("guru-detail-note").textContent = `Menampilkan ${rows.length} murid • klik "Detail" untuk melihat daftar surah yang dihafal.`;
+}
+
+/* ---------- hapus akun percobaan (belum ada aktivitas) ---------- */
+async function cleanInactive() {
+  const inactive = students.filter((s) => (s.totalAnswered || 0) === 0 && (s.quizCount || 0) === 0);
+  if (!inactive.length) {
+    showToast("Tidak ada akun percobaan (semua sudah ada aktivitas).");
+    return;
+  }
+  const peek = inactive
+    .slice(0, 8)
+    .map((s) => "@" + s.username + (s.nama && s.nama !== s.username ? " (" + s.nama + ")" : ""))
+    .join("\n");
+  const more = inactive.length > 8 ? `\n… dan ${inactive.length - 8} akun lain` : "";
+  const ok = confirm(
+    `Hapus ${inactive.length} akun percobaan (belum ada aktivitas sama sekali)?\n\n${peek}${more}\n\nAkun ini akan hilang permanen.`
+  );
+  if (!ok) return;
+  let okCount = 0;
+  const errs = [];
+  for (const s of inactive) {
+    try {
+      await api("/api/guru/delete-student", {
+        method: "POST",
+        body: JSON.stringify({ username: s.username })
+      });
+      okCount++;
+    } catch (e) {
+      errs.push("@" + s.username + " (" + e.message + ")");
+    }
+  }
+  students = students.filter((s) => !inactive.some((x) => x.username === s.username));
+  renderStats();
+  renderTable();
+  showToast(
+    `🧹 ${okCount} akun percobaan dihapus${errs.length ? ", " + errs.length + " gagal: " + errs.join(", ") : ""}.`
+  );
+}
+
+/* ---------- toast sederhana ---------- */
+let toastTimer = null;
+function showToast(text) {
+  let t = document.getElementById("guru-toast");
+  if (!t) {
+    t = document.createElement("div");
+    t.id = "guru-toast";
+    t.style.cssText =
+      "position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:#065f46;color:#fff;" +
+      "font-weight:800;font-size:13.5px;padding:12px 18px;border-radius:99px;box-shadow:0 10px 30px rgba(0,0,0,.25);" +
+      "z-index:999;transition:opacity .3s;opacity:0;max-width:92vw;text-align:center;";
+    document.body.appendChild(t);
+  }
+  t.textContent = text;
+  t.style.opacity = "1";
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.style.opacity = "0"; }, 2800);
 }
 
 /* ---------- CSV ---------- */
@@ -228,6 +316,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   $("btn-guru-logout").addEventListener("click", logout);
   $("guru-search").addEventListener("input", renderTable);
   $("guru-sort").addEventListener("change", renderTable);
+  $("btn-guru-clean").addEventListener("click", cleanInactive);
 
   if (token) {
     try {
