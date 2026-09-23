@@ -394,7 +394,7 @@ img { max-width: 100%; display: block; }
 }
 .surah-info { flex: 1; min-width: 0; }
 .surah-info h4 { font-size: 15.5px; font-weight: 800; color: var(--emerald-900); }
-.surah-info .ar-name { font-family: var(--font-ar); font-size: 19px; color: var(--gold-600); }
+.surah-info .ar-name { display: block; font-family: var(--font-ar); font-size: 23px; line-height: 1.35; color: var(--gold-600); margin-bottom: 3px; }
 .surah-info p { font-size: 12px; color: var(--ink-soft); }
 .surah-badges { display: flex; gap: 5px; margin-top: 5px; flex-wrap: wrap; }
 .badge {

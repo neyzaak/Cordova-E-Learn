@@ -505,7 +505,8 @@ function renderSurahList() {
       <button class="fav-btn ${isFav ? "on" : ""}" data-id="${s.id}" title="Simpan surah">${isFav ? "⭐" : "☆"}</button>
       <div class="surah-num">${s.id}</div>
       <div class="surah-info">
-        <h4>${s.name} <span class="ar-name">${s.arabicName}</span></h4>
+        <span class="ar-name">${s.arabicName}</span>
+        <h4>${s.name}</h4>
         <p>${s.meaning} • ${s.verses} ayat</p>
         <div class="surah-badges">
           <span class="badge">${s.revelation}</span>
