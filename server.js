@@ -95,6 +95,10 @@ async function initStorage() {
     token TEXT,
     progress JSONB NOT NULL DEFAULT '{}'::jsonb
   )`);
+  await pgPool.query(`CREATE TABLE IF NOT EXISTS guru_sessions (
+    token TEXT PRIMARY KEY,
+    created_at BIGINT NOT NULL
+  )`);
   const { rows } = await pgPool.query("SELECT username, nama, salt, hash, token, progress FROM users");
   users = rows.map((r) => ({
     username: r.username,
@@ -141,6 +145,33 @@ async function importLegacyUsersIfEmpty() {
     }
   }
   if (imported) console.log(`[db] mengimpor ${imported} akun lama dari ${USERS_FILE}`);
+}
+
+/* ---------- sesi guru: tersimpan di DB saat mode cloud, agar lintas fungsi Vercel ---------- */
+async function guruLogin(token) {
+  if (!USE_DB) {
+    guruTokens.add(token);
+    return;
+  }
+  try {
+    // buang sesi yang sudah berumur > 30 hari, lalu simpan token baru
+    await pgPool.query(`DELETE FROM guru_sessions WHERE created_at < $1`, [Date.now() - 30 * 24 * 3600 * 1000]);
+    await pgPool.query(`INSERT INTO guru_sessions (token, created_at) VALUES ($1, $2)`, [token, Date.now()]);
+  } catch (e) {
+    console.error("[db] gagal menyimpan sesi guru:", e.message);
+  }
+}
+
+async function guruCheck(token) {
+  if (!token) return false;
+  if (!USE_DB) return guruTokens.has(token);
+  try {
+    const { rows } = await pgPool.query(`SELECT 1 FROM guru_sessions WHERE token = $1`, [token]);
+    return rows.length > 0;
+  } catch (e) {
+    console.error("[db] gagal cek sesi guru:", e.message);
+    return false;
+  }
 }
 
 async function persistUser(u) {
@@ -255,7 +286,7 @@ function readBody(req, cb, limit = 256 * 1024) {
 }
 
 /* ---------- handlers API ---------- */
-function handleApi(req, res, pathname) {
+async function handleApi(req, res, pathname) {
   if (req.method === "OPTIONS") {
     res.writeHead(204, {
       "Access-Control-Allow-Origin": "*",
@@ -287,7 +318,7 @@ function handleApi(req, res, pathname) {
 
   // guru: login password
   if (pathname === "/api/guru/login" && req.method === "POST") {
-    return readBody(req, (readErr, body) => {
+    return readBody(req, async (readErr, body) => {
       if (readErr) return sendJSON(res, 400, err(readErr.message));
       let data = {};
       try {
@@ -299,7 +330,7 @@ function handleApi(req, res, pathname) {
         return sendJSON(res, 401, err("Kata sandi guru salah."));
       }
       const token = genToken();
-      guruTokens.add(token);
+      await guruLogin(token);
       console.log("[guru] login");
       return sendJSON(res, 200, ok({ token }));
     });
@@ -309,7 +340,7 @@ function handleApi(req, res, pathname) {
   if (pathname === "/api/guru/students" && req.method === "GET") {
     const header = req.headers.authorization || "";
     const token = header.startsWith("Bearer ") ? header.slice(7).trim() : "";
-    if (!guruTokens.has(token)) {
+    if (!(await guruCheck(token))) {
       return sendJSON(res, 401, err("Sesi guru tidak valid. Login dulu."));
     }
     const students = users
@@ -460,7 +491,13 @@ async function startServer() {
     .createServer((req, res) => {
       const pathname = (req.url || "/").split("?")[0];
       if (pathname.startsWith("/api/")) {
-        handleApi(req, res, pathname);
+        handleApi(req, res, pathname).catch((e) => {
+          console.error("[api] error tak tertangkap:", e && e.stack);
+          if (!res.headersSent) {
+            res.writeHead(500, { "Content-Type": "application/json; charset=utf-8" });
+            res.end(JSON.stringify({ ok: false, error: "Kesalahan server." }));
+          }
+        });
       } else {
         serveStatic(req, res, pathname);
       }

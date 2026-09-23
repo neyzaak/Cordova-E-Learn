@@ -30,7 +30,7 @@ module.exports = function createHandler(pathname) {
   return async function handler(req, res) {
     try {
       await ensureInit();
-      server.handleApi(req, res, pathname);
+      await server.handleApi(req, res, pathname);
     } catch (e) {
       console.error("[vercel] handler error:", e && e.stack);
       if (!res.headersSent) {
