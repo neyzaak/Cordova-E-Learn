@@ -43,9 +43,18 @@ DATABASE_URL=postgresql://...node server.js
 - Kalau diisi → akun & progres tersimpan di PostgreSQL (awet), dan jika DB masih kosong server otomatis
   mengimpor akun lama dari `data/users.json` sekali.
 - Contoh deploy gratis **tanpa kartu kredit**:
-  - **Vercel** (paling cepat): frontend di-hosting dari folder `public/`, API `/api/*`
-    jadi serverless function (file `api/[...slug].js`) — isi env `DATABASE_URL` dan
-    `GURU_PASSWORD` sekali (`vercel env add`), lalu `vercel deploy --prod`.
+  - **Vercel** (dipakai sekarang) — **live: https://cordova-e-learn.vercel.app**
+    - Frontend di-hosting dari folder `public/`, API `/api/*` jadi serverless function
+      (satu file kecil per rute: `api/ping.js`, `api/register.js`, `api/guru/login.js`, dst.
+      yang meneruskan ke `server.js` — tidak memakai catch-all karena Vercel CLI hanya
+      mencocokkan `[...slug]` satu segmen).
+    - Framework Preset project = **Other** (bukan "Node", supaya Vercel tidak memakai
+      Node Serverless Server); Deployment Protection dimatikan.
+    - Isi env sekali: `vercel env add DATABASE_URL production` dan
+      `vercel env add GURU_PASSWORD production`, lalu `vercel deploy --prod`.
+    - Sesi guru (`guru_sessions`) & akun murid tersimpan di PostgreSQL Neon, sehingga
+      aman lintas lambda/cold start. Bedanya dengan Koyeb klasik: sesi guru in-memory
+      (mode file) vs database (mode Vercel).
   - **Koyeb** (web service Node klasik dari repo GitHub, build via `Dockerfile`, start
     otomatis `node server.js`) + **Neon** (PostgreSQL gratis) — isi variabel
     `DATABASE_URL` dan `GURU_PASSWORD` di dashboard Koyeb.
@@ -87,7 +96,8 @@ Buka `http://IP-laptop:8710/guru.html` di browser Anda (laptop guru). Halaman in
 - Isi laporan: ringkasan kelas (jumlah murid, total poin, rata-rata, hafalan, kuis, soal), tabel per murid
   (poin, jumlah + daftar surah dihafal, skor kuis terbaik, akurasi benar/soal, jumlah kuis, terakhir aktif),
   pencarian & pengurutan, plus tombol **📥 Unduh CSV** untuk dibuka di Excel.
-- Sesi guru hilang saat server dimulai ulang — guru perlu login ulang (tinggal ketik password).
+- Sesi guru: mode file → hilang saat server dimulai ulang (login ulang); mode database (Vercel) →
+  tersimpan di tabel `guru_sessions` sehingga aman lintas instance/cold start.
 
 ## 📁 Struktur
 
@@ -102,7 +112,10 @@ Buka `http://IP-laptop:8710/guru.html` di browser Anda (laptop guru). Halaman in
 │           ├── auth.js      # Akun murid & sinkronisasi ke server
 │           ├── guru.js      # Logika halaman laporan guru
 │           └── app.js       # Logika aplikasi
-├── api/[...slug].js         # Vercel Function: semua /api/* → handler server.js
+├── api/                      # Vercel Functions: satu file kecil per rute /api/*
+│   ├── _handler.js           #   pembungkus → server.handleApi (init storage + error 500)
+│   ├── ping.js register.js login.js progress.js leaderboard.js
+│   └── guru/login.js, guru/students.js
 ├── data/users.json          # Data murid (dibuat otomatis oleh server, mode file)
 ├── tools/
 │   ├── build-data.js        # Generator data surah (dari equran.id API)
