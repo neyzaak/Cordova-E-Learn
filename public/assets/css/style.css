@@ -746,6 +746,11 @@ img { max-width: 100%; display: block; }
   padding: 5px 10px; border-radius: 99px;
 }
 .user-logout:hover { background: rgba(225,29,72,.35); }
+.btn-login {
+  width: 100%; margin-top: 10px;
+  padding: 10px 12px; font-size: 13.5px; border-radius: 12px;
+}
+.btn-login[hidden] { display: none !important; }
 
 .auth-overlay {
   position: fixed; inset: 0; z-index: 95;

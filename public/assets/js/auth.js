@@ -87,6 +87,52 @@
     });
   }
 
+  /**
+   * Saat masuk akun setelah memakai akun lokal: jika akun server masih
+   * kosong total dan perangkat ini punya data lokal, kirim data lokal ke
+   * akun supaya progres tidak hilang. Mengembalikan progres yang berlaku.
+   */
+  async function claimLocalProgress(serverProgress) {
+    const isFresh =
+      !serverProgress ||
+      ((serverProgress.points || 0) === 0 &&
+        (!serverProgress.saved || serverProgress.saved.length === 0) &&
+        (!serverProgress.memorized || serverProgress.memorized.length === 0) &&
+        (serverProgress.totalAnswered || 0) === 0);
+    if (!isFresh || typeof window.storeReady !== "function") return serverProgress;
+    let store = null;
+    window.storeReady((s) => { store = s; });
+    const hasLocal =
+      store &&
+      ((store.points || 0) > 0 ||
+        (Array.isArray(store.saved) && store.saved.length > 0) ||
+        (store.totalAnswered || 0) > 0);
+    if (!hasLocal) return serverProgress;
+    try {
+      await api("/api/progress", {
+        method: "PUT",
+        body: JSON.stringify({
+          progress: {
+            points: store.points,
+            saved: store.saved,
+            memorized: store.memorized,
+            bestQuiz: store.bestQuiz,
+            answeredQuiz: store.answeredQuiz,
+            totalAnswered: store.totalAnswered,
+            totalCorrect: store.totalCorrect,
+            quizCount: store.quizCount,
+            lastActive: store.lastActive,
+            login: store.login
+          }
+        })
+      });
+      const after = await api("/api/progress");
+      return after.progress || serverProgress;
+    } catch (e) {
+      return serverProgress; // gagal kirim → tetap lanjut dengan data server
+    }
+  }
+
   function showOverlay() {
     const el = document.getElementById("auth-overlay");
     if (el) el.classList.add("show");
@@ -101,10 +147,13 @@
     const userEl = document.getElementById("sidebar-user");
     const namaEl = document.getElementById("user-nama");
     const btnAccount = document.getElementById("btn-account");
+    const btnLoginBar = document.getElementById("btn-login-bar");
     // kartu akun & tombol ⚙️ hanya untuk akun server; tamu (akun lokal) tidak dapat membuka pengaturan
     const isAccount = Boolean(online && username);
     if (userEl) userEl.hidden = !isAccount;
     if (btnAccount) btnAccount.hidden = !isAccount;
+    // tombol "Masuk Akun" muncul saat online tapi belum masuk (memakai akun lokal)
+    if (btnLoginBar) btnLoginBar.hidden = !(online && !username);
     if (namaEl) namaEl.textContent = nama || username || "";
     if (statusEl) {
       statusEl.textContent = online
@@ -179,7 +228,8 @@
       localStorage.setItem("aft-nama", nama || "");
       hideOverlay();
       updateUi();
-      applyServerProgress({ points: 0, saved: [], memorized: [], bestQuiz: 0, answeredQuiz: 0 });
+      const prog = await claimLocalProgress(null); // akun baru server masih kosong
+      applyServerProgress(prog);
       return data.user;
     },
 
@@ -196,8 +246,8 @@
       localStorage.setItem("aft-nama", nama || "");
       hideOverlay();
       updateUi();
-      const prog = await api("/api/progress");
-      applyServerProgress(prog.progress);
+      const prog = await claimLocalProgress((await api("/api/progress")).progress);
+      applyServerProgress(prog);
       return data.user;
     },
 
@@ -349,6 +399,14 @@
       });
     }
     if (guestBtn) guestBtn.addEventListener("click", () => window.Auth.guest());
+    // tombol "Masuk Akun" di sidebar (muncul saat memakai akun lokal)
+    const btnLoginBar = document.getElementById("btn-login-bar");
+    if (btnLoginBar) {
+      btnLoginBar.addEventListener("click", () => {
+        setMode("login");
+        showOverlay();
+      });
+    }
 
     /* ---------- pengaturan akun (profil & password) ---------- */
     const accountOverlay = document.getElementById("account-overlay");
