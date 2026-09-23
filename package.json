@@ -3,9 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "description": "Cordova E-Learn — belajar Al-Qur'an interaktif untuk siswa SMP (server statis + API akun murid).",
-  "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "serve": "node server.js"
   },
   "dependencies": {
     "@neon/config": "^1.7.2",
