@@ -177,7 +177,7 @@ function renderTable() {
         .map((id) => SURAH_NAMES[id] || "Surah " + id)
         .sort((a, b) => a.localeCompare(b, "id"))
         .join(", ");
-      const acc = s.totalAnswered > 0 ? s.totalCorrect + "/" + s.totalAnswered : "—";
+      const acc = s.totalAnswered > 0 ? s.totalCorrect + "/" + s.totalAnswered : "";
       const accBadge =
         s.totalAnswered === 0
           ? `<span class="badge b-red">belum</span>`
