@@ -25,6 +25,21 @@ function esc(s) {
   return String(s == null ? "" : s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 }
 
+/* Format nama murid singkat di tabel guru:
+   2 kata  → 1 baris penuh
+   3 kata  → kata ke-3 jadi inisial
+   4 kata  → 2 baris (2 kata per baris)
+   >=5 kata → kata ke-5 dst jadi inisial */
+function formatNama(nama) {
+  const w = String(nama == null ? "" : nama).trim().split(/\s+/).filter(Boolean);
+  const n = w.length;
+  if (n <= 2) return w.join(" ");
+  if (n === 3) return w[0] + " " + w[1] + " " + w[2].charAt(0) + ".";
+  if (n === 4) return w[0] + " " + w[1] + "\n" + w[2] + " " + w[3];
+  const init = w.slice(4).map((x) => x.charAt(0) + ".").join(" ");
+  return w[0] + " " + w[1] + "\n" + w[2] + " " + w[3] + (init ? " " + init : "");
+}
+
 async function api(path, opts = {}) {
   const headers = { "Content-Type": "application/json", ...(opts.headers || {}) };
   if (token) headers.Authorization = "Bearer " + token;
@@ -191,7 +206,7 @@ function renderTable() {
       return `
       <tr>
         <td>${i + 1}</td>
-        <td class="nm">${esc(s.nama)}<br /><small style="color:var(--ink-soft);font-weight:600">@${esc(s.username)}</small></td>
+        <td class="nm">${esc(formatNama(s.nama)).replace(/\n/g, "<br />")}<br /><small style="color:var(--ink-soft);font-weight:600">@${esc(s.username)}</small></td>
         <td class="pts">${s.points}</td>
         <td>${hafal.length > 0 ? `<span class="badge b-green">${hafal.length}</span>` : "—"}</td>
         <td>${s.bestQuiz || "—"}</td>
