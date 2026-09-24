@@ -236,7 +236,7 @@ function sanitizeLogin(src) {
     best: clamp(s.best, 100000),
     month: isMonth(s.month) ? s.month : "",
     days: Array.isArray(s.days) ? [...new Set(s.days.filter(isDate))].slice(0, 400) : [],
-    level: Number.isInteger(s.level) && s.level >= 0 && s.level <= 2 ? s.level : 0,
+    level: Number.isInteger(s.level) && s.level >= 0 && s.level <= 3 ? s.level : 0,
     levelDays: clamp(s.levelDays, 100000),
     levelCycles: clamp(s.levelCycles, 10000)
   };

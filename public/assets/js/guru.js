@@ -202,7 +202,7 @@ function renderTable() {
       const streak = s.streak || 0;
       const bestStreak = s.bestStreak || 0;
       const loyaltyLevel = s.loyaltyLevel || 0;
-      const levelNames = ["—", "Pemula (7 hari)", "Rajin (14 hari)", "Setia (30 hari)"];
+      const levelNames = ["—", "Pemula (7 hari)", "Rajin (14 hari)", "Setia (30 hari)", "Berlian (60 hari)"];
       return `
       <tr>
         <td>${i + 1}</td>
@@ -341,7 +341,7 @@ function showToast(text) {
 /* ---------- CSV ---------- */
 function exportCsv() {
   const sep = ";";
-  const levelNames = ["—", "Pemula (7 hari)", "Rajin (14 hari)", "Setia (30 hari)"];
+  const levelNames = ["—", "Pemula (7 hari)", "Rajin (14 hari)", "Setia (30 hari)", "Berlian (60 hari)"];
   const head = ["No", "Nama", "Username", "Poin", "Jumlah Hafalan", "Surah Dihafal", "Skor Kuis Terbaik", "Benar", "Dijawab", "Akurasi %", "Kuis Selesai", "Streak Hari", "Best Streak", "Level Loyalitas", "Terakhir Aktif"];
   const lines = [head.join(sep)];
   sorted().forEach((s, i) => {

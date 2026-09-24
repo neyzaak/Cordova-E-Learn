@@ -53,7 +53,7 @@ const defaultStore = {
   takwin: { done: [] }, // tingkat Latihan Tahsin (Metode Takwin) yang sudah selesai
   login: {
     day: "", streak: 0, best: 0, month: "", days: [], // kalender bulan berjalan
-    level: 0,      // tingkat loyalitas: 0=7 hari, 1=14 hari, 2=30 hari
+    level: 0,      // tingkat loyalitas: 0=7 hari, 1=14 hari, 2=30 hari, 3=60 hari
     levelDays: 0,  // hari beruntun pada tingkat saat ini
     levelCycles: 0 // berapa kali siklus 7→14→30 selesai
   }
@@ -222,8 +222,8 @@ function confettiBurst() {
 /* ============================================================
    LOGIN MILESTONE — rajin mampir = poin bonus + rekor 🔥
    - angka beruntun (streak) dihitung harian & lintas bulan
-   - tangga loyalitas: 7 → 14 → 30 hari beruntun,
-     setelah 🥇 Emas tercapai → reset kembali ke 7 (siklus berulang)
+   - tangga loyalitas: 7 → 14 → 30 → 60 hari beruntun,
+     setelah 💎 Berlian tercapai → reset kembali ke 7 (siklus berulang)
    ============================================================ */
 const MONTH_NAMES = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 
@@ -233,13 +233,14 @@ function dayStr(d) {
   return `${d.getFullYear()}-${m}-${dd}`;
 }
 
-/* tangga loyalitas: 7 → 14 → 30 → reset ke 7 (siklus) */
-const LOYALTY_TARGETS = [7, 14, 30];
-const LOYALTY_REWARDS = [10, 15, 40];
+/* tangga loyalitas: 7 → 14 → 30 → 60 → reset ke 7 (siklus) */
+const LOYALTY_TARGETS = [7, 14, 30, 60];
+const LOYALTY_REWARDS = [10, 15, 40, 100];
 const LOYALTY_META = [
   { name: "Perunggu", emoji: "🥉" },
   { name: "Perak", emoji: "🥈" },
-  { name: "Emas", emoji: "🥇" }
+  { name: "Emas", emoji: "🥇" },
+  { name: "Berlian", emoji: "💎" }
 ];
 
 /* dicatat 1x per hari; beri poin login + bonus pencapaian */
@@ -271,7 +272,7 @@ function checkDailyLogin() {
 
     awards.push({ n: 3, msg: "+3 poin login hari ini! 🌟" });
 
-    // tangga loyalitas: 7 → 14 → 30, lalu reset kembali ke 7
+    // tangga loyalitas: 7 → 14 → 30 → 60, lalu reset kembali ke 7
     login.levelDays = login.streak === 1 ? 1 : (login.levelDays || 0) + 1;
     while (login.level < LOYALTY_TARGETS.length && login.levelDays >= LOYALTY_TARGETS[login.level]) {
       const meta = LOYALTY_META[login.level];
@@ -407,7 +408,7 @@ function renderLoyaltyPage() {
       <div class="loy-progress__bar"><span style="width:${pct}%"></span></div>
       <p>${left > 0
         ? isLast
-          ? `Selesaikan ${left} hari lagi untuk 🥇 Emas, lalu siklus dimulai ulang dari 🥉 7 hari.`
+          ? `Selesaikan ${left} hari lagi untuk ${meta.emoji} ${meta.name}, lalu siklus dimulai ulang dari ${LOYALTY_META[0].emoji} ${LOYALTY_META[0].name} (${LOYALTY_TARGETS[0]} hari).`
           : `Butuh ${left} hari lagi (${pct}%) untuk naik ke ${LOYALTY_META[levelIdx + 1].emoji} ${LOYALTY_META[levelIdx + 1].name} — hadiah +${LOYALTY_REWARDS[levelIdx + 1]} poin.`
         : "Target tingkat ini sudah tercapai! 🎉"}
       </p>
