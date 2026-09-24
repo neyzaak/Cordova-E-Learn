@@ -202,7 +202,7 @@ function renderTable() {
         <td>${bestStreak > 0 ? `<span class="badge b-green">🏆 ${bestStreak} hari</span>` : `<span style="color:var(--ink-soft)">—</span>`}</td>
         <td>${loyaltyLevel > 0 ? `<span class="badge b-green">${levelNames[loyaltyLevel]}</span>` : `<span style="color:var(--ink-soft)">—</span>`}</td>
         <td>${timeAgo(s.lastActive)}</td>
-        <td>
+        <td class="row-actions">
           <button class="row-btn" data-row="${i}">Detail</button>
           <button class="row-danger" data-del="${esc(s.username)}" title="Hapus akun percobaan ini">Hapus</button>
         </td>
