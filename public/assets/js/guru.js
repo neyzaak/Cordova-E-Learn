@@ -187,7 +187,7 @@ function renderTable() {
       const streak = s.streak || 0;
       const bestStreak = s.bestStreak || 0;
       const loyaltyLevel = s.loyaltyLevel || 0;
-      const levelNames = ["—", "🌱 Pemula (7 hari)", "🌿 Rajin (14 hari)", "🌳 Setia (30 hari)"];
+      const levelNames = ["—", "Pemula (7 hari)", "Rajin (14 hari)", "Setia (30 hari)"];
       return `
       <tr>
         <td>${i + 1}</td>
