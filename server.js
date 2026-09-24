@@ -391,7 +391,13 @@ async function handleApi(req, res, pathname) {
           totalCorrect: p.totalCorrect,
           quizCount: p.quizCount,
           acc: p.totalAnswered > 0 ? Math.round((p.totalCorrect / p.totalAnswered) * 100) : 0,
-          lastActive: p.lastActive
+          lastActive: p.lastActive,
+          // milestone login
+          streak: p.login?.streak || 0,
+          bestStreak: p.login?.best || 0,
+          loyaltyLevel: p.login?.level || 0,
+          levelDays: p.login?.levelDays || 0,
+          levelCycles: p.login?.levelCycles || 0
         };
       })
       .sort((a, b) => b.points - a.points || b.bestQuiz - a.bestQuiz || a.nama.localeCompare(b.nama));

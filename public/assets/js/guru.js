@@ -157,6 +157,7 @@ function sorted() {
     name: (a, b) => a.nama.localeCompare(b.nama, "id"),
     hafal: (a, b) => (b.memorized || []).length - (a.memorized || []).length,
     quiz: (a, b) => (b.quizCount || 0) - (a.quizCount || 0),
+    streak: (a, b) => (b.streak || 0) - (a.streak || 0) || (b.bestStreak || 0) - (a.bestStreak || 0),
     active: (a, b) => (b.lastActive || 0) - (a.lastActive || 0)
   }[mode] || ((a, b) => b.points - a.points);
   return arr.slice().sort(cmp);
@@ -166,7 +167,7 @@ function renderTable() {
   const rows = sorted();
   const tbody = $("guru-tbody");
   if (!rows.length) {
-    tbody.innerHTML = `<tr><td colspan="10" class="guru-empty">Tidak ada murid yang cocok${students.length ? "" : " — daftar akun dulu dari aplikasi murid"}.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="13" class="guru-empty">Tidak ada murid yang cocok${students.length ? "" : " — daftar akun dulu dari aplikasi murid"}.</td></tr>`;
     return;
   }
   tbody.innerHTML = rows
@@ -183,6 +184,10 @@ function renderTable() {
           : Math.round((s.totalCorrect / s.totalAnswered) * 100) >= 80
           ? `<span class="badge b-green">${Math.round((s.totalCorrect / s.totalAnswered) * 100)}%</span>`
           : `<span class="badge b-gold">${Math.round((s.totalCorrect / s.totalAnswered) * 100)}%</span>`;
+      const streak = s.streak || 0;
+      const bestStreak = s.bestStreak || 0;
+      const loyaltyLevel = s.loyaltyLevel || 0;
+      const levelNames = ["—", "🌱 Pemula (7 hari)", "🌿 Rajin (14 hari)", "🌳 Setia (30 hari)"];
       return `
       <tr>
         <td>${i + 1}</td>
@@ -193,6 +198,9 @@ function renderTable() {
         <td>${accBadge} <small style="color:var(--ink-soft)">${acc}</small></td>
         <td>${s.totalAnswered || 0}</td>
         <td>${s.quizCount || 0}</td>
+        <td>${streak > 0 ? `<span class="badge b-gold">🔥 ${streak} hari</span>` : `<span style="color:var(--ink-soft)">—</span>`}</td>
+        <td>${bestStreak > 0 ? `<span class="badge b-green">🏆 ${bestStreak} hari</span>` : `<span style="color:var(--ink-soft)">—</span>`}</td>
+        <td>${loyaltyLevel > 0 ? `<span class="badge b-green">${levelNames[loyaltyLevel]}</span>` : `<span style="color:var(--ink-soft)">—</span>`}</td>
         <td>${timeAgo(s.lastActive)}</td>
         <td>
           <button class="row-btn" data-row="${i}">Detail</button>
@@ -201,14 +209,17 @@ function renderTable() {
       </tr>
       <tr class="row-detail" id="rd-${i}">
         <td></td>
-        <td colspan="9">
+        <td colspan="11">
           <strong style="color:var(--emerald-800)">📿 Surah yang dihafal:</strong>
           ${namaHafal ? `<div class="hafal-tags">${hafal.map((id) => '<span>' + esc(SURAH_NAMES[id] || "Surah " + id) + "</span>").join("")}</div>` : '<span style="color:var(--ink-soft)">Belum ada. Ayo semangat menghafal!</span>'}
           <div style="margin-top:8px">
             ⭐ Poin: <strong>${s.points}</strong> •
             🧠 Skor kuis terbaik: <strong>${s.bestQuiz || 0}</strong> •
             📚 Favorit: <strong>${(s.saved || []).length}</strong> •
-            ✏️ Benar: <strong>${s.totalCorrect || 0}</strong> / ${s.totalAnswered || 0} dijawab
+            ✏️ Benar: <strong>${s.totalCorrect || 0}</strong> / ${s.totalAnswered || 0} dijawab •
+            🔥 Streak: <strong>${streak}</strong> hari •
+            🏆 Best: <strong>${bestStreak}</strong> hari •
+            📅 Level: <strong>${loyaltyLevel > 0 ? levelNames[loyaltyLevel] : "—"}</strong>
           </div>
         </td>
       </tr>`;
@@ -313,7 +324,8 @@ function showToast(text) {
 /* ---------- CSV ---------- */
 function exportCsv() {
   const sep = ";";
-  const head = ["No", "Nama", "Username", "Poin", "Jumlah Hafalan", "Surah Dihafal", "Skor Kuis Terbaik", "Benar", "Dijawab", "Akurasi %", "Kuis Selesai", "Terakhir Aktif"];
+  const levelNames = ["—", "Pemula (7 hari)", "Rajin (14 hari)", "Setia (30 hari)"];
+  const head = ["No", "Nama", "Username", "Poin", "Jumlah Hafalan", "Surah Dihafal", "Skor Kuis Terbaik", "Benar", "Dijawab", "Akurasi %", "Kuis Selesai", "Streak Hari", "Best Streak", "Level Loyalitas", "Terakhir Aktif"];
   const lines = [head.join(sep)];
   sorted().forEach((s, i) => {
     const hafal = (s.memorized || []).map((id) => SURAH_NAMES[id] || id).join(" / ");
@@ -323,6 +335,9 @@ function exportCsv() {
       s.bestQuiz || 0, s.totalCorrect || 0, s.totalAnswered || 0,
       s.totalAnswered ? Math.round((s.totalCorrect / s.totalAnswered) * 100) : 0,
       s.quizCount || 0,
+      s.streak || 0,
+      s.bestStreak || 0,
+      s.loyaltyLevel > 0 ? levelNames[s.loyaltyLevel] : "—",
       s.lastActive ? new Date(s.lastActive).toLocaleString("id-ID") : ""
     ].join(sep));
   });
