@@ -223,7 +223,7 @@ function confettiBurst() {
    LOGIN MILESTONE — rajin mampir = poin bonus + rekor 🔥
    - angka beruntun (streak) dihitung harian & lintas bulan
    - tangga loyalitas: 7 → 14 → 30 → 60 hari beruntun,
-     setelah 💎 Berlian tercapai → reset kembali ke 7 (siklus berulang)
+     setelah 💎 Platinum tercapai → reset kembali ke 7 (siklus berulang)
    ============================================================ */
 const MONTH_NAMES = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 
@@ -240,7 +240,7 @@ const LOYALTY_META = [
   { name: "Perunggu", emoji: "🥉" },
   { name: "Perak", emoji: "🥈" },
   { name: "Emas", emoji: "🥇" },
-  { name: "Berlian", emoji: "💎" }
+  { name: "Platinum", emoji: "💎" }
 ];
 
 /* dicatat 1x per hari; beri poin login + bonus pencapaian */
