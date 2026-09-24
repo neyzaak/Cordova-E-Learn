@@ -198,8 +198,8 @@ function renderTable() {
         <td>${accBadge} <small style="color:var(--ink-soft)">${acc}</small></td>
         <td>${s.totalAnswered || 0}</td>
         <td>${s.quizCount || 0}</td>
-        <td>${streak > 0 ? `<span class="badge b-gold">🔥 ${streak} hari</span>` : `<span style="color:var(--ink-soft)">—</span>`}</td>
-        <td>${bestStreak > 0 ? `<span class="badge b-green">🏆 ${bestStreak} hari</span>` : `<span style="color:var(--ink-soft)">—</span>`}</td>
+        <td>${streak > 0 ? streak : "—"}</td>
+        <td>${bestStreak > 0 ? bestStreak : "—"}</td>
         <td>${loyaltyLevel > 0 ? `<span class="badge b-green">${levelNames[loyaltyLevel]}</span>` : `<span style="color:var(--ink-soft)">—</span>`}</td>
         <td>${timeAgo(s.lastActive)}</td>
         <td>
