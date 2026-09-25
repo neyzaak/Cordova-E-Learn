@@ -1410,3 +1410,67 @@ img { max-width: 100%; display: block; }
 [data-theme="dark"] .loy-level__status.ok { background: #2a220d; color: #e3b94a; border-color: rgba(212, 169, 55, .5); }
 [data-theme="dark"] .loy-level__status.now { background: var(--gold-500); }
 [data-theme="dark"] .loy-level__status.locked { background: #13322a; color: #9fe8c8; border-color: #1d4a3a; }
+
+/* ============================================================
+   STABILITAS MOBILE & LAYAR LIPAT
+   (iPhone incl. notch/landscape, Android foldable cover/terbuka)
+   ============================================================ */
+
+/* tinggi dinamis: tidak melompat saat bar alamat muncul/sembunyi */
+@supports (min-height: 100dvh) {
+  body { min-height: 100dvh; }
+}
+
+/* safe-area: geser konten menjauh dari notch/dynamic island/home indicator
+   (di sisi kiri/kanan saat iPhone landscape & layar lipat) */
+.topbar {
+  padding-left: calc(clamp(26px, 3.5vw, 60px) + env(safe-area-inset-left));
+  padding-right: calc(clamp(26px, 3.5vw, 60px) + env(safe-area-inset-right));
+}
+.main {
+  padding-left: calc(clamp(26px, 3.5vw, 60px) + env(safe-area-inset-left));
+  padding-right: calc(clamp(26px, 3.5vw, 60px) + env(safe-area-inset-right));
+}
+
+/* layar super sempit (layar depan pelipat & ponsel kecil) */
+@media (max-width: 360px) {
+  .topbar__title h2 { font-size: 17px; }
+  .topbar__title p { max-width: calc(100vw - 200px); }
+  .theme-toggle, .hamburger { width: 36px; height: 36px; }
+  .points-chip { padding: 5px 10px; gap: 4px; }
+  .points-chip strong { font-size: 14px; }
+  .hero { padding: 20px 14px; border-radius: 18px; }
+  .hero__title { font-size: 23px; }
+  .hero__art { height: 118px; }
+  .hero__cta .btn { padding: 12px 14px; font-size: 14px; }
+  .home-bottom { grid-template-columns: 1fr; }
+  .surah-grid, .rules-grid, .doa-grid, .hijaiyah-grid { grid-template-columns: 1fr; }
+  .seg { flex-wrap: wrap; border-radius: 16px; }
+  .seg-btn { flex: 1 1 40%; min-width: 0; text-align: center; }
+  .loy-levels { grid-template-columns: 1fr; }
+  .login-miles { gap: 5px; }
+  .log-mile { padding: 8px 2px; }
+  .guru-stats { grid-template-columns: repeat(2, 1fr); }
+  .guru-head h1 { font-size: 19px; }
+  .guru-head .ght-ico { width: 44px; height: 44px; font-size: 22px; }
+}
+
+/* landscape dengan tinggi pendek (pelipat dibuka menyamping / ponsel dimiringkan) */
+@media (orientation: landscape) and (max-height: 560px) {
+  :root { --topbar-h: 56px; }
+  .hero__art { display: none; }
+  .hero { padding: 20px 22px; border-radius: 22px; }
+  .stats-strip { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin: 14px 0 18px; }
+  .main { padding-top: calc(var(--topbar-h) + 10px); }
+  .bottom-nav { padding-top: 4px; padding-bottom: calc(4px + env(safe-area-inset-bottom)); }
+  .bottom-nav button { padding: 4px 2px; gap: 1px; }
+  .bottom-nav em { font-size: 9.5px; }
+  .quote-card, .daily-card { padding: 18px; }
+  .page-head { margin: 4px 0 14px; }
+}
+
+/* input minimal 16px agar iOS tidak zoom otomatis saat fokus */
+@media (max-width: 480px) {
+  .guru-toolbar input[type="search"],
+  .guru-toolbar select { font-size: 16px; }
+}

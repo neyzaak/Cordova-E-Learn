@@ -22,10 +22,16 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Amiri:wght@400;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/css/style.css" />
+  <link rel="stylesheet" href="assets/css/style.css?v=5" />
   <style>
-    body { background: linear-gradient(160deg, #f4fbf6, #e8f5ec 40%, #fdf7e7); min-height: 100vh; }
-    .guru-wrap { max-width: 980px; margin: 0 auto; padding: 28px 18px 60px; }
+    body { background: linear-gradient(160deg, #f4fbf6, #e8f5ec 40%, #fdf7e7); min-height: 100vh; min-height: 100dvh; }
+    .guru-wrap {
+      max-width: 980px; margin: 0 auto;
+      padding: calc(28px + env(safe-area-inset-top))
+        calc(18px + env(safe-area-inset-right))
+        calc(60px + env(safe-area-inset-bottom))
+        calc(18px + env(safe-area-inset-left));
+    }
     .guru-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; }
     .guru-head .ght-ico {
       width: 52px; height: 52px; display: grid; place-items: center; font-size: 26px;
@@ -37,7 +43,7 @@
     .guru-head .spacer { flex: 1; }
 
     /* ---- tampilan login ---- */
-    .guru-login { display: grid; place-items: center; min-height: 68vh; }
+    .guru-login { display: grid; place-items: center; min-height: 68vh; min-height: 68svh; }
     .guru-login .card { width: 100%; max-width: 380px; padding: 26px 24px; text-align: center; }
     .guru-login .card h3 { font-size: 19px; color: var(--emerald-900); margin-bottom: 4px; }
     .guru-login .card > p { font-size: 12.5px; color: var(--ink-soft); margin-bottom: 14px; }
@@ -68,7 +74,7 @@
       border: 1.5px solid rgba(6,78,59,.15); border-radius: 10px;
     }
     .guru-toolbar select { padding: 9px 10px; font-size: 13px; font-weight: 700; border-radius: 10px; border: 1.5px solid rgba(6,78,59,.15); background: #fff; }
-    .gwrap { overflow-x: auto; border-radius: var(--radius-sm); }
+    .gwrap { overflow-x: auto; border-radius: var(--radius-sm); -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
     table.gtable { width: 100%; min-width: 720px; border-collapse: collapse; background: #fff; }
     .gtable th {
       position: sticky; top: 0; background: var(--emerald-800); color: #fff;
@@ -108,7 +114,26 @@
     .footer-link a { color: var(--emerald-700); font-weight: 800; }
 
     /* ---- tombol mode gelap (halaman guru) ---- */
-    .guru-theme-toggle { position: fixed; top: 14px; right: 14px; z-index: 120; }
+    .guru-theme-toggle {
+      position: fixed;
+      top: calc(14px + env(safe-area-inset-top));
+      right: calc(14px + env(safe-area-inset-right));
+      z-index: 120;
+    }
+
+    /* ===== STABILITAS MOBILE & LAYAR LIPAT (halaman guru) ===== */
+    @media (max-width: 480px) {
+      .guru-head h1 { font-size: 19px; }
+      .guru-head .ght-ico { width: 44px; height: 44px; font-size: 22px; }
+      .guru-toolbar input[type="search"],
+      .guru-toolbar select { font-size: 16px; }
+      .guru-toolbar input[type="search"] { min-width: 0; }
+    }
+    @media (orientation: landscape) and (max-height: 560px) {
+      .guru-login { min-height: 92svh; }
+      .guru-wrap { padding-top: calc(14px + env(safe-area-inset-top)); }
+      .guru-head { margin-bottom: 12px; }
+    }
 
     /* ================= MODE GELAP HALAMAN GURU ================= */
     [data-theme="dark"] body {
