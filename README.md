@@ -134,4 +134,4 @@ Buka `http://IP-laptop:8710/guru.html` di browser Anda (laptop guru). Halaman in
 HTML5 + CSS3 + JavaScript murni (tanpa framework). Font: Plus Jakarta Sans & Amiri (via Google Fonts, dengan fallback sistem). Progres pengguna tersimpan per akun di server (`data/users.json`), dengan cadangan `localStorage` untuk mode lokal. Konten surah bersumber dari [equran.id](https://equran.id) (teks Arab, transliterasi latin Indonesia, dan terjemahan Kemenag) — regenerate kapan saja dengan `node tools/build-data.js`. Bank soal dihasilkan otomatis dari konten dengan `node tools/build-quiz.js` (deterministik, ~2.159 soal, level 1–3).
 
 ---
-©2026 Neyzaak
+©2026 Neyzaak · All Rights Reserved
