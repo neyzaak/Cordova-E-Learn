@@ -56,17 +56,15 @@ DATABASE_URL=postgresql://...node server.js
     - Sesi guru (`guru_sessions`) & akun murid tersimpan di PostgreSQL Neon, sehingga aman
       lintas instance/cold start.
     - Tes lokal: `npx wrangler pages dev public --binding "DATABASE_URL=<url>" --port 8788`.
-  - **Vercel** (deploy lama; bisa dipakai sebagai cadangan) — **live: https://cordova-e-learn.vercel.app**
-    - Frontend di-hosting dari folder `public/`, API `/api/*` jadi serverless function
-      (satu file kecil per rute: `api/ping.js`, `api/register.js`, `api/guru/login.js`, dst.
-      yang meneruskan ke `server.js`).
-    - Framework Preset project = **Other**; Deployment Protection dimatikan.
-    - Isi env sekali: `vercel env add DATABASE_URL production` dan
-      `vercel env add GURU_PASSWORD production`, lalu `vercel deploy --prod`.
   - **Koyeb** (web service Node klasik dari repo GitHub, build via `Dockerfile`, start
     otomatis `node server.js`) + **Neon** (PostgreSQL gratis) — isi variabel
     `DATABASE_URL` dan `GURU_PASSWORD` di dashboard Koyeb.
   - Cadangan: Render (terkadang minta kartu kredit saat verifikasi akun).
+
+> 📝 Catatan: proyek Vercel lama (`cordova-e-learn.vercel.app`) **sudah dihapus** setelah
+> Cloudflare Pages terverifikasi penuh (register, login + rotasi token, progres, klasemen,
+> halaman guru, hapus murid). Adaptor Vercel di folder `api/` tetap ada di repo jika suatu
+> saat mau deploy ke Vercel lagi.
 
 **Agar setiap murid punya data sendiri:** semua perangkat (HP/komputer) di Wi-Fi atau jaringan yang sama
 bisa membuka server dari laptop guru: `http://IP-laptop:8710` (contoh: `http://15.22.33.128:8710`).
@@ -125,7 +123,7 @@ Buka `http://IP-laptop:8710/guru.html` di browser Anda (laptop guru). Halaman in
 │           ├── auth.js      # Akun murid & sinkronisasi ke server
 │           ├── guru.js      # Logika halaman laporan guru
 │           └── app.js       # Logika aplikasi
-├── api/                      # Vercel Functions (deploy cadangan/lama): satu file kecil per rute /api/*
+├── api/                      # Adaptor Vercel Functions (usang — proyek Vercel sudah dihapus): satu file kecil per rute /api/*
 │   ├── _handler.js           #   pembungkus → server.handleApi (init storage + error 500)
 │   ├── ping.js register.js login.js progress.js leaderboard.js
 │   └── guru/login.js, guru/students.js
