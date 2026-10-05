@@ -10,3 +10,5 @@ data/users.json.tmp
 
 .vercel
 .env*
+.wrangler/
+.wrangler/

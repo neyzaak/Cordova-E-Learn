@@ -19,7 +19,14 @@ const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
 
-const ROOT = __dirname;
+const ROOT = (() => {
+  // __dirname ada di CommonJS/Node, tapi tidak di bundel ESM Cloudflare.
+  try {
+    return typeof __dirname !== "undefined" ? __dirname : process.cwd();
+  } catch {
+    return process.cwd();
+  }
+})();
 // file web dipindah ke public/ biar cocok dengan hosting statis (Vercel, dll.);
 // kalau belum ada public/, tetap layani dari folder proyek (mode offline/LAN lama).
 const STATIC_DIR = fs.existsSync(path.join(ROOT, "public")) ? path.join(ROOT, "public") : ROOT;
@@ -82,11 +89,17 @@ async function initStorage() {
     console.log(`[file] akun dimuat dari ${USERS_FILE} (${users.length})`);
     return;
   }
-  const { Pool } = require("pg"); // dibutuhkan hanya saat mode database
-  pgPool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false }
-  });
+  // Klien Neon stateless berbasis HTTP fetch — aman dipakai lintas request
+  // di Cloudflare/Vercel (tidak ada socket/stream yang terikat ke satu
+  // request handler). Dibungkus agar API .query() sama dengan Pool.
+  const { neon } = require("@neondatabase/serverless");
+  const sqlClient = neon(process.env.DATABASE_URL, { fullResults: true });
+  pgPool = {
+    async query(text, params) {
+      const res = await sqlClient.query(text, params);
+      return { rows: (res && res.rows) || [] };
+    }
+  };
   await pgPool.query(`CREATE TABLE IF NOT EXISTS users (
     username TEXT PRIMARY KEY,
     nama TEXT NOT NULL,

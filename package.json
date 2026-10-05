@@ -9,10 +9,18 @@
   "dependencies": {
     "@neon/config": "^1.7.2",
     "@neon/env": "^1.4.3",
-    "pg": "^8.13.1"
+    "@neondatabase/serverless": "^1.2.0"
   },
   "engines": {
     "node": ">=18"
   },
-  "license": "UNLICENSED"
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "wrangler": "^4.147.0"
+  },
+  "allowScripts": {
+    "wrangler@4.147.0": true,
+    "workerd@1.20261001.1": true,
+    "esbuild@0.28.1": true
+  }
 }

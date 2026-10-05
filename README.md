@@ -44,18 +44,25 @@ DATABASE_URL=postgresql://...node server.js
 - Kalau diisi → akun & progres tersimpan di PostgreSQL (awet), dan jika DB masih kosong server otomatis
   mengimpor akun lama dari `data/users.json` sekali.
 - Contoh deploy gratis **tanpa kartu kredit**:
-  - **Vercel** (dipakai sekarang) — **live: https://cordova-e-learn.vercel.app**
+  - **Cloudflare Pages** (dipakai sekarang) — **live: `https://cordova-e-learn.pages.dev`**
+    - Frontend di-hosting dari folder `public/`, API `/api/*` jadi **Pages Functions**
+      (`functions/` — satu file kecil per rute yang meneruskan ke `server.js`,
+      dengan adaptor Node http → Fetch API di `functions/_lib/server-compat.js`).
+    - Konfigurasi: `wrangler.toml` (`compatibility_flags = ["nodejs_compat"]`).
+    - Deploy: `npx wrangler login` (sekali), lalu
+      `npx wrangler pages deploy public --project-name cordova-e-learn --branch main`.
+    - Isi secret sekali: `npx wrangler pages secret put DATABASE_URL --project-name cordova-e-learn` dan
+      `npx wrangler pages secret put GURU_PASSWORD --project-name cordova-e-learn`.
+    - Sesi guru (`guru_sessions`) & akun murid tersimpan di PostgreSQL Neon, sehingga aman
+      lintas instance/cold start.
+    - Tes lokal: `npx wrangler pages dev public --binding "DATABASE_URL=<url>" --port 8788`.
+  - **Vercel** (deploy lama; bisa dipakai sebagai cadangan) — **live: https://cordova-e-learn.vercel.app**
     - Frontend di-hosting dari folder `public/`, API `/api/*` jadi serverless function
       (satu file kecil per rute: `api/ping.js`, `api/register.js`, `api/guru/login.js`, dst.
-      yang meneruskan ke `server.js` — tidak memakai catch-all karena Vercel CLI hanya
-      mencocokkan `[...slug]` satu segmen).
-    - Framework Preset project = **Other** (bukan "Node", supaya Vercel tidak memakai
-      Node Serverless Server); Deployment Protection dimatikan.
+      yang meneruskan ke `server.js`).
+    - Framework Preset project = **Other**; Deployment Protection dimatikan.
     - Isi env sekali: `vercel env add DATABASE_URL production` dan
       `vercel env add GURU_PASSWORD production`, lalu `vercel deploy --prod`.
-    - Sesi guru (`guru_sessions`) & akun murid tersimpan di PostgreSQL Neon, sehingga
-      aman lintas lambda/cold start. Bedanya dengan Koyeb klasik: sesi guru in-memory
-      (mode file) vs database (mode Vercel).
   - **Koyeb** (web service Node klasik dari repo GitHub, build via `Dockerfile`, start
     otomatis `node server.js`) + **Neon** (PostgreSQL gratis) — isi variabel
     `DATABASE_URL` dan `GURU_PASSWORD` di dashboard Koyeb.
@@ -102,13 +109,13 @@ Buka `http://IP-laptop:8710/guru.html` di browser Anda (laptop guru). Halaman in
 - Isi laporan: ringkasan kelas (jumlah murid, total poin, rata-rata, hafalan, kuis, soal), tabel per murid
   (poin, jumlah + daftar surah dihafal, skor kuis terbaik, akurasi benar/soal, jumlah kuis, terakhir aktif),
   pencarian & pengurutan, plus tombol **📥 Unduh CSV** untuk dibuka di Excel.
-- Sesi guru: mode file → hilang saat server dimulai ulang (login ulang); mode database (Vercel) →
+- Sesi guru: mode file → hilang saat server dimulai ulang (login ulang); mode database (cloud) →
   tersimpan di tabel `guru_sessions` sehingga aman lintas instance/cold start.
 
 ## 📁 Struktur
 
 ```
-├── public/                  # Seluruh halaman & asset situs (di-host Vercel / layanan statis)
+├── public/                  # Seluruh halaman & asset situs (di-host Cloudflare Pages / layanan statis)
 │   ├── index.html           # Halaman utama (single page app)
 │   ├── guru.html            # Laporan progres murid (khusus guru)
 │   └── assets/
@@ -118,10 +125,14 @@ Buka `http://IP-laptop:8710/guru.html` di browser Anda (laptop guru). Halaman in
 │           ├── auth.js      # Akun murid & sinkronisasi ke server
 │           ├── guru.js      # Logika halaman laporan guru
 │           └── app.js       # Logika aplikasi
-├── api/                      # Vercel Functions: satu file kecil per rute /api/*
+├── api/                      # Vercel Functions (deploy cadangan/lama): satu file kecil per rute /api/*
 │   ├── _handler.js           #   pembungkus → server.handleApi (init storage + error 500)
 │   ├── ping.js register.js login.js progress.js leaderboard.js
 │   └── guru/login.js, guru/students.js
+├── functions/                # Cloudflare Pages Functions (dipakai sekarang): rute /api/* yang sama
+│   ├── api/                  #   ping.js, login.js, register.js, progress.js, guru/login.js, dst.
+│   └── _lib/server-compat.js #   adaptor Node http → Fetch API untuk server.js
+├── wrangler.toml             # Konfigurasi Cloudflare Pages (public/ + functions/)
 ├── data/users.json          # Data murid (dibuat otomatis oleh server, mode file)
 ├── tools/
 │   ├── build-data.js        # Generator data surah (dari equran.id API)

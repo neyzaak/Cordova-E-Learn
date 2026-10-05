@@ -1,0 +1,9 @@
+# ============================================================
+# Cloudflare Pages — Cordova E-Learn
+# Statis: public/  •  API: functions/ (Node.js compat)
+# Env (secret): DATABASE_URL, GURU_PASSWORD
+# ============================================================
+name = "cordova-e-learn"
+compatibility_date = "2025-06-01"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = "./public"
