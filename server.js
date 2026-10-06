@@ -54,6 +54,7 @@ const MIME = {
 
 /* ---------- penyimpanan murid ---------- */
 let users = [];
+let userCount = 0; // jumlah akun — mode file: panjang array; mode DB: SELECT count(*)
 function loadUsers() {
   try {
     users = (JSON.parse(fs.readFileSync(USERS_FILE, "utf8")).users || []).filter((u) => u && u.username);
@@ -86,6 +87,7 @@ function normalizeProgressJson(raw) {
 async function initStorage() {
   if (!USE_DB) {
     loadUsers();
+    userCount = users.length;
     console.log(`[file] akun dimuat dari ${USERS_FILE} (${users.length})`);
     return;
   }
@@ -112,22 +114,15 @@ async function initStorage() {
     token TEXT PRIMARY KEY,
     created_at BIGINT NOT NULL
   )`);
-  const { rows } = await pgPool.query("SELECT username, nama, salt, hash, token, progress FROM users");
-  users = rows.map((r) => ({
-    username: r.username,
-    nama: r.nama,
-    salt: r.salt,
-    hash: r.hash,
-    token: r.token || null,
-    progress: normalizeProgressJson(r.progress)
-  }));
-  console.log(`[db] terhubung PostgreSQL, ${users.length} akun dimuat`);
+  const { rows } = await pgPool.query("SELECT count(*)::int AS n FROM users");
+  userCount = rows[0].n;
+  console.log(`[db] terhubung PostgreSQL, ${userCount} akun`);
   // migrasi sekali: bila DB kosong tapi ada data lama di users.json
-  await importLegacyUsersIfEmpty();
+  await importLegacyUsersIfEmpty(userCount);
 }
 
-async function importLegacyUsersIfEmpty() {
-  if (users.length > 0) return;
+async function importLegacyUsersIfEmpty(count) {
+  if (count > 0) return;
   let legacy = [];
   try {
     legacy = (JSON.parse(fs.readFileSync(USERS_FILE, "utf8")).users || []).filter((u) => u && u.username);
@@ -184,26 +179,6 @@ async function guruCheck(token) {
   } catch (e) {
     console.error("[db] gagal cek sesi guru:", e.message);
     return false;
-  }
-}
-
-/* Muat ulang daftar murid dari DB setiap panggilan API, agar semua
-   function Vercel membaca kondisi terbaru (termasuk setelah akun
-   dihapus lewat instance lain). */
-async function refreshUsersFromDb() {
-  if (!USE_DB || !pgPool) return;
-  try {
-    const { rows } = await pgPool.query("SELECT username, nama, salt, hash, token, progress FROM users");
-    users = rows.map((r) => ({
-      username: r.username,
-      nama: r.nama,
-      salt: r.salt,
-      hash: r.hash,
-      token: r.token || null,
-      progress: normalizeProgressJson(r.progress)
-    }));
-  } catch (e) {
-    console.error("[db] gagal refresh users:", e.message);
   }
 }
 
@@ -296,9 +271,60 @@ function hashPw(pw, salt) {
 function genToken() {
   return crypto.randomBytes(24).toString("hex");
 }
-function findUserByToken(token) {
+/* Ubah satu baris hasil query DB menjadi objek user (bentuk sama dengan mode file) */
+function rowToUser(r) {
+  return {
+    username: r.username,
+    nama: r.nama,
+    salt: r.salt,
+    hash: r.hash,
+    token: r.token || null,
+    progress: normalizeProgressJson(r.progress)
+  };
+}
+
+/* Cari user dengan query tertarget — TIDAK lagi memuat seluruh akun di
+   tiap request (hemat kuota transfer data Neon 5 GB/bulan; aman untuk
+   ratusan ribu request). Mode file tetap memakai array di memori. */
+async function findUserByToken(token) {
   if (!token) return null;
-  return users.find((u) => u.token === token) || null;
+  if (!USE_DB) return users.find((u) => u.token === token) || null;
+  try {
+    const { rows } = await pgPool.query(
+      "SELECT username, nama, salt, hash, token, progress FROM users WHERE token = $1",
+      [token]
+    );
+    return rows.length ? rowToUser(rows[0]) : null;
+  } catch (e) {
+    console.error("[db] gagal cari user by token:", e.message);
+    return null;
+  }
+}
+
+async function findUserByUsername(username) {
+  if (!username) return null;
+  if (!USE_DB) return users.find((u) => u.username === username) || null;
+  try {
+    const { rows } = await pgPool.query(
+      "SELECT username, nama, salt, hash, token, progress FROM users WHERE username = $1",
+      [username]
+    );
+    return rows.length ? rowToUser(rows[0]) : null;
+  } catch (e) {
+    console.error("[db] gagal cari user by username:", e.message);
+    return null;
+  }
+}
+
+async function countUsers() {
+  if (!USE_DB) return users.length;
+  try {
+    const { rows } = await pgPool.query("SELECT count(*)::int AS n FROM users");
+    return rows[0].n;
+  } catch (e) {
+    console.error("[db] gagal hitung user:", e.message);
+    return null;
+  }
 }
 
 /* ---------- bantuan HTTP ---------- */
@@ -339,15 +365,35 @@ async function handleApi(req, res, pathname) {
     return res.end();
   }
 
-  // pastikan memori selalu sesuai DB (mode cloud)
-  await refreshUsersFromDb();
-
   if (pathname === "/api/ping" && req.method === "GET") {
-    return sendJSON(res, 200, ok({ status: "ok", total: users.length }));
+    const total = await countUsers();
+    if (total === null) return sendJSON(res, 500, err("Database tidak merespons. Coba lagi nanti."));
+    return sendJSON(res, 200, ok({ status: "ok", total }));
   }
 
   // klasemen — tanpa perlu login (hanya data aman: nama & skor)
   if (pathname === "/api/leaderboard" && req.method === "GET") {
+    if (USE_DB) {
+      try {
+        /* Hitung langsung di SQL: hanya kolom yang dibutuhkan, urut &
+           batasi di server — tidak mengirim salt/hash/token/progress mentah. */
+        const q = await pgPool.query(`
+          SELECT username,
+                 COALESCE(NULLIF(nama, ''), username) AS nama,
+                 COALESCE(progress->>'points', '0')::int AS points,
+                 COALESCE(jsonb_array_length(CASE WHEN jsonb_typeof(progress->'memorized') = 'array'
+                       THEN progress->'memorized' ELSE '[]'::jsonb END), 0) AS hafal,
+                 COALESCE(progress->>'bestQuiz', '0')::int AS "bestQuiz",
+                 COALESCE(progress->'login'->>'streak', '0')::int AS streak
+          FROM users
+          ORDER BY points DESC, hafal DESC, "bestQuiz" DESC
+          LIMIT 50`);
+        return sendJSON(res, 200, ok({ leaderboard: q.rows }));
+      } catch (e) {
+        console.error("[db] gagal ambil klasemen:", e.message);
+        return sendJSON(res, 500, err("Gagal memuat klasemen. Coba lagi."));
+      }
+    }
     const rows = users
       .map((u) => ({
         username: u.username,
@@ -389,7 +435,21 @@ async function handleApi(req, res, pathname) {
     if (!(await guruCheck(token))) {
       return sendJSON(res, 401, err("Sesi guru tidak valid. Login dulu."));
     }
-    const students = users
+    let daftar = users;
+    if (USE_DB) {
+      try {
+        const q = await pgPool.query("SELECT username, nama, progress FROM users");
+        daftar = q.rows.map((r) => ({
+          username: r.username,
+          nama: r.nama,
+          progress: normalizeProgressJson(r.progress)
+        }));
+      } catch (e) {
+        console.error("[db] gagal ambil daftar murid:", e.message);
+        return sendJSON(res, 500, err("Gagal memuat data murid. Coba lagi."));
+      }
+    }
+    const students = daftar
       .map((u) => {
         const p = sanitizeProgress(u.progress);
         return {
@@ -436,18 +496,21 @@ async function handleApi(req, res, pathname) {
       if (!/^[a-z0-9_.]{3,20}$/.test(username)) {
         return sendJSON(res, 400, err("Username tidak valid."));
       }
-      const idx = users.findIndex((u) => u.username === username);
-      if (idx < 0) return sendJSON(res, 404, err("Akun tidak ditemukan."));
-      const [removed] = users.splice(idx, 1);
       try {
         if (USE_DB) {
-          await pgPool.query(`DELETE FROM users WHERE username = $1`, [username]);
+          const { rows } = await pgPool.query(
+            `DELETE FROM users WHERE username = $1 RETURNING username`,
+            [username]
+          );
+          if (!rows.length) return sendJSON(res, 404, err("Akun tidak ditemukan."));
         } else {
+          const idx = users.findIndex((u) => u.username === username);
+          if (idx < 0) return sendJSON(res, 404, err("Akun tidak ditemukan."));
+          users.splice(idx, 1);
           saveUsers();
         }
       } catch (e) {
         console.error("[db] gagal hapus", username, ":", e.message);
-        users.push(removed); // kembalikan ke memori jika penyimpanan gagal
         return sendJSON(res, 500, err("Gagal menghapus dari penyimpanan."));
       }
       console.log("[guru] hapus akun:", username);
@@ -475,28 +538,49 @@ async function handleApi(req, res, pathname) {
         }
         if (!nama || nama.length > 40) return sendJSON(res, 400, err("Nama wajib diisi (maks. 40 huruf)."));
         if (password.length < 4) return sendJSON(res, 400, err("Password minimal 4 karakter."));
-        if (users.some((u) => u.username === username)) {
-          return sendJSON(res, 409, err("Username sudah dipakai. Coba yang lain."));
-        }
         const salt = crypto.randomBytes(16).toString("hex");
+        const token = genToken();
         const user = {
           username,
           nama,
           salt,
           hash: hashPw(password, salt),
-          token: genToken(),
+          token,
           progress: DEFAULTS()
         };
-        users.push(user);
-        await persistUser(user);
+        if (USE_DB) {
+          try {
+            /* INSERT aman balapan: kalau username ternyata sudah dipakai
+               (dua pendaftaran nyaris bersamaan), tidak ada baris balik → 409. */
+            const { rows } = await pgPool.query(
+              `INSERT INTO users (username, nama, salt, hash, token, progress)
+               VALUES ($1,$2,$3,$4,$5,$6)
+               ON CONFLICT (username) DO NOTHING
+               RETURNING username`,
+              [username, nama, salt, user.hash, token, JSON.stringify(user.progress)]
+            );
+            if (!rows.length) {
+              return sendJSON(res, 409, err("Username sudah dipakai. Coba yang lain."));
+            }
+          } catch (e) {
+            console.error("[db] gagal daftar", username, ":", e.message);
+            return sendJSON(res, 500, err("Gagal menyimpan akun. Coba lagi."));
+          }
+        } else {
+          if (users.some((u) => u.username === username)) {
+            return sendJSON(res, 409, err("Username sudah dipakai. Coba yang lain."));
+          }
+          users.push(user);
+          await persistUser(user);
+        }
         console.log(`[auth] daftar akun: ${username}`);
-        return sendJSON(res, 201, ok({ user: { username, nama }, token: user.token }));
+        return sendJSON(res, 201, ok({ user: { username, nama }, token }));
       }
 
       // /api/login
       const username = String(data.username || "").trim().toLowerCase();
       const password = String(data.password || "");
-      const user = users.find((u) => u.username === username);
+      const user = await findUserByUsername(username);
       if (!user || user.hash !== hashPw(password, user.salt)) {
         return sendJSON(res, 401, err("Username atau password salah."));
       }
@@ -511,7 +595,7 @@ async function handleApi(req, res, pathname) {
   if (pathname === "/api/progress") {
     const header = req.headers.authorization || "";
     const token = header.startsWith("Bearer ") ? header.slice(7).trim() : "";
-    const user = findUserByToken(token);
+    const user = await findUserByToken(token);
     if (!user) return sendJSON(res, 401, err("Sesi tidak valid. Silakan masuk kembali."));
 
     if (req.method === "GET") {
@@ -538,7 +622,7 @@ async function handleApi(req, res, pathname) {
   if (pathname === "/api/update-profile" && req.method === "POST") {
     const header = req.headers.authorization || "";
     const token = header.startsWith("Bearer ") ? header.slice(7).trim() : "";
-    const user = findUserByToken(token);
+    const user = await findUserByToken(token);
     if (!user) return sendJSON(res, 401, err("Sesi tidak valid. Silakan masuk kembali."));
     return readBody(req, async (readErr, body) => {
       if (readErr) return sendJSON(res, 400, err(readErr.message));
@@ -560,7 +644,7 @@ async function handleApi(req, res, pathname) {
   if (pathname === "/api/change-password" && req.method === "POST") {
     const header = req.headers.authorization || "";
     const token = header.startsWith("Bearer ") ? header.slice(7).trim() : "";
-    const user = findUserByToken(token);
+    const user = await findUserByToken(token);
     if (!user) return sendJSON(res, 401, err("Sesi tidak valid. Silakan masuk kembali."));
     return readBody(req, async (readErr, body) => {
       if (readErr) return sendJSON(res, 400, err(readErr.message));
@@ -644,7 +728,7 @@ async function startServer() {
     })
     .listen(PORT, () => {
       console.log(`🕌 Cordova E-Learn berjalan di http://localhost:${PORT}`);
-      console.log(`   Akun terdaftar: ${users.length}`);
+      console.log(`   Akun terdaftar: ${userCount}`);
     });
 }
 
